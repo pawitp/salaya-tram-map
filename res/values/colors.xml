@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="tram_red">#dd0e3f</color>
+	<color name="tram_blue">#003ed8</color>
+	<color name="tram_green">#4f8c1f</color>
+</resources>

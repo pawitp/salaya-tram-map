@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-</LinearLayout>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+    <LinearLayout
+    	android:layout_height="wrap_content"
+    	android:id="@+id/linearLayoutTime"
+    	android:layout_alignParentBottom="true"
+    	android:layout_width="fill_parent">
+        <LinearLayout
+        	style="@style/tram_time_linear_layout"
+        	android:background="@color/tram_green">
+            <TextView
+            	android:id="@+id/txtTramLeftGreen"
+            	style="@style/tram_left_time"/>
+			<TextView
+            	android:id="@+id/txtTramNextGreen"
+            	style="@style/tram_next_time"/>
+        </LinearLayout>
+        <LinearLayout
+        	style="@style/tram_time_linear_layout"
+        	android:background="@color/tram_red">
+            <TextView
+            	android:id="@+id/txtTramLeftRed"
+            	style="@style/tram_left_time"/>
+			<TextView
+            	android:id="@+id/txtTramNextRed"
+            	style="@style/tram_next_time"/>
+        </LinearLayout>
+        <LinearLayout
+			style="@style/tram_time_linear_layout"
+        	android:background="@color/tram_blue">
+            <TextView
+            	android:id="@+id/txtTramLeftBlue"
+            	style="@style/tram_left_time"/>
+            <TextView
+            	android:id="@+id/txtTramNextBlue"
+            	style="@style/tram_next_time"/>
+        </LinearLayout>
+    </LinearLayout>
+    <TextView android:layout_alignParentLeft="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/time_left_station" android:id="@+id/lblTramLeftStation" android:layout_above="@id/linearLayoutTime"></TextView>
+</RelativeLayout>
