@@ -1,4 +1,4 @@
-package org.dyndns.pawitp.salayatrammap;
+package org.dyndns.pawitp.salayatrammap.schedule;
 
 import android.text.format.Time;
 import android.util.Log;

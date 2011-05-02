@@ -1,4 +1,4 @@
-package org.dyndns.pawitp.salayatrammap;
+package org.dyndns.pawitp.salayatrammap.schedule;
 
 public class NoTramLeftException extends TramException {
 

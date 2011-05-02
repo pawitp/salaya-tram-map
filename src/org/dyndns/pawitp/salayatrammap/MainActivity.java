@@ -1,5 +1,10 @@
 package org.dyndns.pawitp.salayatrammap;
 
+import org.dyndns.pawitp.salayatrammap.schedule.NoMoreTramException;
+import org.dyndns.pawitp.salayatrammap.schedule.TramCarSchedule;
+import org.dyndns.pawitp.salayatrammap.schedule.TramException;
+import org.dyndns.pawitp.salayatrammap.schedule.TramsSchedule;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;

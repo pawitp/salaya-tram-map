@@ -1,4 +1,4 @@
-package org.dyndns.pawitp.salayatrammap;
+package org.dyndns.pawitp.salayatrammap.schedule;
 
 import android.text.format.Time;
 import android.util.Log;
@@ -7,9 +7,9 @@ public class TramsSchedule {
 	
 	private static final String TAG = "TramsSchedule";
 	
-	static final int TRAM_GREEN = 0;
-	static final int TRAM_BLUE = 1;
-	static final int TRAM_RED = 2;
+	public static final int TRAM_GREEN = 0;
+	public static final int TRAM_BLUE = 1;
+	public static final int TRAM_RED = 2;
 	
 	private static final int TRAMS_COUNT = 3;
 	private TramCarSchedule[] mTramCarSchedules = new TramCarSchedule[TRAMS_COUNT];
