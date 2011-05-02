@@ -1,7 +1,6 @@
 package org.dyndns.pawitp.salayatrammap;
 
-import java.util.Calendar;
-
+import android.text.format.Time;
 import android.util.Log;
 
 public class TramsSchedule {
@@ -75,9 +74,10 @@ public class TramsSchedule {
 	
 	public boolean isHoliday() {
 		// TODO: Public holidays
-		int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		Time time = new Time();
+		time.setToNow();
 		
-		if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+		if (time.weekDay == Time.SATURDAY || time.weekDay == Time.SUNDAY) {
 			return true;
 		}
 		else {

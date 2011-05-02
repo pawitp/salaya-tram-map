@@ -1,7 +1,6 @@
 package org.dyndns.pawitp.salayatrammap;
 
-import java.util.Calendar;
-
+import android.text.format.Time;
 import android.util.Log;
 
 public class TramCarSchedule {
@@ -16,7 +15,7 @@ public class TramCarSchedule {
 		mSchedule = schedule;
 	}
 	
-	public Calendar getLastTram() throws NoTramLeftException, NoMoreTramException {
+	public Time getLastTram() throws NoTramLeftException, NoMoreTramException {
 		try {
 			int index = locateNextTram() - 1;
 			
@@ -24,15 +23,17 @@ public class TramCarSchedule {
 				throw new NoTramLeftException();
 			}
 			
-			return tramTimeToCalendar(mSchedule[index]);
+			return tramTimeToTime(mSchedule[index]);
 		}
 		catch (NoMoreTramException e) {
 			// Check if the last round of tram is still running
 			int indexLast = mSchedule.length - 1;
-			Calendar last = tramTimeToCalendar(mSchedule[indexLast]);
-			Calendar now = Calendar.getInstance();
+			Time last = tramTimeToTime(mSchedule[indexLast]);
+			Time now = new Time();
+			now.setToNow();
 			
-			if (now.getTimeInMillis() - last.getTimeInMillis() < TRAM_ROUND_TIME) {
+			long diff = now.toMillis(false) - last.toMillis(false);
+			if (diff < TRAM_ROUND_TIME) {
 				return last;
 			}
 			else {
@@ -41,52 +42,53 @@ public class TramCarSchedule {
 		}
 	}
 	
-	public Calendar getNextTram() throws NoMoreTramException {
-		return tramTimeToCalendar(mSchedule[locateNextTram()]);
+	public Time getNextTram() throws NoMoreTramException {
+		return tramTimeToTime(mSchedule[locateNextTram()]);
 	}
 	
 	public long getUpdateTime() {
-		Calendar now = Calendar.getInstance();
+		Time now = new Time();
+		now.setToNow();
+		
 		try {
-			Calendar tram = tramTimeToCalendar(mSchedule[locateNextTram()]); 
-			return tram.getTimeInMillis() - now.getTimeInMillis();
+			Time tram = tramTimeToTime(mSchedule[locateNextTram()]); 
+			return tram.toMillis(false) - now.toMillis(false);
 		}
 		catch (NoMoreTramException e) {
 			// Check last round
 			int indexLast = mSchedule.length - 1;
-			Calendar last = tramTimeToCalendar(mSchedule[indexLast]);
+			Time last = tramTimeToTime(mSchedule[indexLast]);
 			
-			long timeDiff = now.getTimeInMillis() - last.getTimeInMillis();
+			long timeDiff = now.toMillis(false) - last.toMillis(false);
 			if (timeDiff < TRAM_ROUND_TIME) {
 				return TRAM_ROUND_TIME  - timeDiff;
 			}
 			else {
 				// wait till next day
-				Calendar tomorrow = Calendar.getInstance();
-				tomorrow.set(Calendar.HOUR_OF_DAY, 24);
-				tomorrow.set(Calendar.MINUTE, 00);
-				tomorrow.set(Calendar.SECOND, 00);
-				tomorrow.set(Calendar.MILLISECOND, 00);
+				Time tomorrow = new Time();
+				tomorrow.setToNow();
+				tomorrow.hour = 24;
+				tomorrow.minute = 0;
+				tomorrow.second = 0;
 				
-				return tomorrow.getTimeInMillis() - now.getTimeInMillis();
+				return tomorrow.toMillis(false) - now.toMillis(false);
 			}
 		}
 	}
 	
 	private int locateNextTram() throws NoMoreTramException {
 		Log.v(TAG, "Calculating next tram");
-		Calendar now = Calendar.getInstance();
-		now.set(Calendar.SECOND, 0); // Avoid second differences in comparison
-		now.set(Calendar.MILLISECOND, 0);
-		Calendar tram = Calendar.getInstance();
-		tram.set(Calendar.SECOND, 0);
-		tram.set(Calendar.MILLISECOND, 0);
+		Time now = new Time();
+		now.setToNow();
+		now.second = 0; // Avoid second differences in comparison
+		
+		Time tram = new Time(now);
 		
 		boolean found = false;
 		int i;
 		for (i = 0; i < mSchedule.length; i++) {
-			tram.set(Calendar.HOUR_OF_DAY, mSchedule[i][0]);
-			tram.set(Calendar.MINUTE, mSchedule[i][1]);
+			tram.hour = mSchedule[i][0];
+			tram.minute = mSchedule[i][1];
 			
 			if (tram.after(now)) {
 				Log.v(TAG, "Found tram: " + i);
@@ -102,12 +104,12 @@ public class TramCarSchedule {
 		return i;
 	}
 	
-	private Calendar tramTimeToCalendar(Integer[] time) {
-		Calendar ret = Calendar.getInstance();
-		ret.set(Calendar.HOUR_OF_DAY, time[0]);
-		ret.set(Calendar.MINUTE, time[1]);
-		ret.set(Calendar.SECOND, 0);
-		ret.set(Calendar.MILLISECOND, 0);
+	private Time tramTimeToTime(Integer[] time) {
+		Time ret = new Time();
+		ret.setToNow();
+		ret.hour = time[0];
+		ret.minute = time[1];
+		ret.second = 0;
 		return ret;
 	}
 }
