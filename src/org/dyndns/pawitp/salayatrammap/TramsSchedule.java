@@ -2,7 +2,11 @@ package org.dyndns.pawitp.salayatrammap;
 
 import java.util.Calendar;
 
+import android.util.Log;
+
 public class TramsSchedule {
+	
+	private static final String TAG = "TramsSchedule";
 	
 	static final int TRAM_GREEN = 0;
 	static final int TRAM_BLUE = 1;
@@ -67,18 +71,17 @@ public class TramsSchedule {
 	
 	public long getNextUpdateTime() {
 		// TODO: Over-day case
-		Calendar updateTime = Calendar.getInstance();
-		updateTime.set(Calendar.HOUR_OF_DAY, 23);
-		updateTime.set(Calendar.MINUTE, 59);
+		long updateTime = Long.MAX_VALUE;
 		
 		for (int i = 0; i < mTramCarSchedules.length; i++) {
-			Calendar tramUpdateTime = mTramCarSchedules[i].getNextTramCalendar();
-			if (tramUpdateTime.before(updateTime)) {
+			long tramUpdateTime = mTramCarSchedules[i].getUpdateTime();
+			if (tramUpdateTime < updateTime) {
 				updateTime = tramUpdateTime;
 			}
 		}
 		
-		return updateTime.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+		Log.v(TAG, "Updating in: " + updateTime);
+		return updateTime;
 	}
 	
 	public boolean isHoliday() {

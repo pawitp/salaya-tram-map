@@ -3,4 +3,5 @@
 	<string name="app_name">Salaya Tram Map</string>
 	<string name="time_left_station">Tram Left Station</string>
 	<string name="next_tram">Next: %s</string>
+	<string name="no_tram">-</string>
 </resources>
