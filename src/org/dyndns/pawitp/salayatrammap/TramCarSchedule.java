@@ -8,7 +8,6 @@ public class TramCarSchedule {
 	
 	private static final String TAG = "TramCarSchedule";
 	
-	private static final String TIME_FORMAT = "%02d:%02d";
 	private static final long TRAM_ROUND_TIME = 600000; // 10 minutes
 	
 	Integer[][] mSchedule;
@@ -17,7 +16,7 @@ public class TramCarSchedule {
 		mSchedule = schedule;
 	}
 	
-	public String getLastTram() throws NoTramLeftException, NoMoreTramException {
+	public Calendar getLastTram() throws NoTramLeftException, NoMoreTramException {
 		try {
 			int index = locateNextTram() - 1;
 			
@@ -25,7 +24,7 @@ public class TramCarSchedule {
 				throw new NoTramLeftException();
 			}
 			
-			return buildTimeString(index);
+			return tramTimeToCalendar(mSchedule[index]);
 		}
 		catch (NoMoreTramException e) {
 			// Check if the last round of tram is still running
@@ -34,7 +33,7 @@ public class TramCarSchedule {
 			Calendar now = Calendar.getInstance();
 			
 			if (now.getTimeInMillis() - last.getTimeInMillis() < TRAM_ROUND_TIME) {
-				return buildTimeString(indexLast);
+				return last;
 			}
 			else {
 				throw new NoMoreTramException();
@@ -42,8 +41,8 @@ public class TramCarSchedule {
 		}
 	}
 	
-	public String getNextTram() throws NoMoreTramException {
-		return buildTimeString(locateNextTram());
+	public Calendar getNextTram() throws NoMoreTramException {
+		return tramTimeToCalendar(mSchedule[locateNextTram()]);
 	}
 	
 	public long getUpdateTime() {
@@ -101,10 +100,6 @@ public class TramCarSchedule {
 		}
 		
 		return i;
-	}
-	
-	private String buildTimeString(int i) {
-		return String.format(TIME_FORMAT, mSchedule[i][0], mSchedule[i][1]);
 	}
 	
 	private Calendar tramTimeToCalendar(Integer[] time) {

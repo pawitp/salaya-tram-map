@@ -43,13 +43,13 @@ public class MainActivity extends Activity {
 		TextView txtNext = (TextView) findViewById(idNext);
 		
 		try {
-			txtNext.setText(schedule.getNextTram());
+			txtNext.setText(Utils.formatTime(this, schedule.getNextTram()));
 		} catch (NoMoreTramException e) {
 			txtNext.setText(R.string.no_tram);
 		}
 		
 		try {
-			txtLeft.setText(schedule.getLastTram());
+			txtLeft.setText(Utils.formatTime(this, schedule.getLastTram()));
 		} catch (TramException e) {
 			txtLeft.setText(R.string.no_tram);
 		}

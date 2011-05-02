@@ -4,7 +4,7 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_alignParentTop">true</item>
-		<item name="android:textSize">25sp</item>
+		<item name="android:textSize">23sp</item>
 		<item name="android:gravity">center_horizontal</item>
 		<item name="android:text">00:00</item>
 	</style>
