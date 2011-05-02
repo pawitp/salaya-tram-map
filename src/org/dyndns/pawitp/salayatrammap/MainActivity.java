@@ -43,18 +43,16 @@ public class MainActivity extends Activity {
 		TextView txtNext = (TextView) findViewById(idNext);
 		
 		try {
+			txtNext.setText(schedule.getNextTram());
+		} catch (NoMoreTramException e) {
+			txtNext.setText(R.string.no_tram);
+		}
+		
+		try {
 			txtLeft.setText(schedule.getLastTram());
 		} catch (TramException e) {
 			txtLeft.setText(R.string.no_tram);
 		}
-		
-		String strNext;
-		try {
-			strNext = schedule.getNextTram();
-		} catch (NoMoreTramException e) {
-			strNext = getString(R.string.no_tram);
-		}
-		txtNext.setText(String.format(getString(R.string.next_tram), strNext));
 	}
 	
 	private Runnable runnableUpdateTramsTime = new Runnable() {
