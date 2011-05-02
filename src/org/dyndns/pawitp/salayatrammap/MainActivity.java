@@ -17,9 +17,6 @@ public class MainActivity extends Activity {
 		
 		mTramsSchedule = new TramsSchedule();
 		mHandler = new Handler();
-		
-		// TODO: Update every minute
-
 	}
 
 	@Override
