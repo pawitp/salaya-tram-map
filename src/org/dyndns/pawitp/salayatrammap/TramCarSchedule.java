@@ -32,12 +32,19 @@ public class TramCarSchedule {
 		Calendar ret = Calendar.getInstance();
 		ret.set(Calendar.HOUR_OF_DAY, schedule[0]);
 		ret.set(Calendar.MINUTE, schedule[1]);
+		ret.set(Calendar.SECOND, 0);
+		ret.set(Calendar.MILLISECOND, 0);
 		return ret;
 	}
 	
 	private int locateNextTram() {
+		Log.v(TAG, "Calculating next tram");
 		Calendar now = Calendar.getInstance();
+		now.set(Calendar.SECOND, 0); // Avoid second differences in comparison
+		now.set(Calendar.MILLISECOND, 0);
 		Calendar tram = Calendar.getInstance();
+		tram.set(Calendar.SECOND, 0);
+		tram.set(Calendar.MILLISECOND, 0);
 		
 		int i;
 		for (i = 0; i < mSchedule.length; i++) {
