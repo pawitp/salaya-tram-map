@@ -52,17 +52,7 @@ public class TramsSchedule {
 	};
 	
 	public TramsSchedule() {
-		// TODO: Reset on change day
-		if (!isHoliday()) {
-			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_NORMAL_SCHEDULE);
-			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_NORMAL_SCHEDULE);
-			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule	
-		}
-		else {
-			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_HOLIDAY_SCHEDULE);
-			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_HOLIDAY_SCHEDULE);
-			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule
-		}
+		initSchedules();
 	}
 	
 	public TramCarSchedule getSchedule(int tram) {
@@ -70,7 +60,6 @@ public class TramsSchedule {
 	}
 	
 	public long getNextUpdateTime() {
-		// TODO: Over-day case
 		long updateTime = Long.MAX_VALUE;
 		
 		for (int i = 0; i < mTramCarSchedules.length; i++) {
@@ -96,4 +85,21 @@ public class TramsSchedule {
 		}
 	}
 	
+	public void updateSchedules() {
+		// Maybe check if the date is changed, but it seems expensive compared to the initialization procedure
+		initSchedules();
+	}
+	
+	private void initSchedules() {
+		if (!isHoliday()) {
+			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_NORMAL_SCHEDULE);
+			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_NORMAL_SCHEDULE);
+			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule	
+		}
+		else {
+			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_HOLIDAY_SCHEDULE);
+			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_HOLIDAY_SCHEDULE);
+			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule
+		}
+	}
 }

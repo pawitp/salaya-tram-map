@@ -62,18 +62,15 @@ public class MainActivity extends Activity {
 		public void run() {
 			Log.v(TAG, "Updating trams time");
 			
+			mTramsSchedule.updateSchedules();
+			
 			updateTramTime(TramsSchedule.TRAM_GREEN, R.id.txtTramLeftGreen, R.id.txtTramNextGreen);
 			updateTramTime(TramsSchedule.TRAM_BLUE, R.id.txtTramLeftBlue, R.id.txtTramNextBlue);
 			updateTramTime(TramsSchedule.TRAM_RED, R.id.txtTramLeftRed, R.id.txtTramNextRed);
 			
 			long updateTime = mTramsSchedule.getNextUpdateTime();
 			
-			if (updateTime != TramCarSchedule.NO_UPDATE) {
-				mHandler.postDelayed(runnableUpdateTramsTime, updateTime);
-			}
-			else {
-				// TODO: Set update for next day
-			}
+			mHandler.postDelayed(runnableUpdateTramsTime, updateTime);
 		}
 		
 	};

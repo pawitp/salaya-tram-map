@@ -8,8 +8,6 @@ public class TramCarSchedule {
 	
 	private static final String TAG = "TramCarSchedule";
 	
-	static final long NO_UPDATE = Long.MAX_VALUE;
-	
 	private static final String TIME_FORMAT = "%02d:%02d";
 	private static final long TRAM_ROUND_TIME = 600000; // 10 minutes
 	
@@ -64,7 +62,14 @@ public class TramCarSchedule {
 				return TRAM_ROUND_TIME  - timeDiff;
 			}
 			else {
-				return NO_UPDATE;
+				// wait till next day
+				Calendar tomorrow = Calendar.getInstance();
+				tomorrow.set(Calendar.HOUR_OF_DAY, 24);
+				tomorrow.set(Calendar.MINUTE, 00);
+				tomorrow.set(Calendar.SECOND, 00);
+				tomorrow.set(Calendar.MILLISECOND, 00);
+				
+				return tomorrow.getTimeInMillis() - now.getTimeInMillis();
 			}
 		}
 	}
