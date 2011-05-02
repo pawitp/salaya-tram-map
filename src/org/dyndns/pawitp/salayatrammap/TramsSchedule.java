@@ -65,6 +65,22 @@ public class TramsSchedule {
 		return mTramCarSchedules[tram];
 	}
 	
+	public long getNextUpdateTime() {
+		// TODO: Over-day case
+		Calendar updateTime = Calendar.getInstance();
+		updateTime.set(Calendar.HOUR_OF_DAY, 23);
+		updateTime.set(Calendar.MINUTE, 59);
+		
+		for (int i = 0; i < mTramCarSchedules.length; i++) {
+			Calendar tramUpdateTime = mTramCarSchedules[i].getNextTramCalendar();
+			if (tramUpdateTime.before(updateTime)) {
+				updateTime = tramUpdateTime;
+			}
+		}
+		
+		return updateTime.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+	}
+	
 	public boolean isHoliday() {
 		// TODO: Public holidays
 		int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
