@@ -86,28 +86,29 @@ public class MapView extends ImageView {
 			return true; // Required so that events are triggered
 		}
 		
-		private void checkEdges(Matrix matrix) {
-			float[] values = new float[9];
-			matrix.getValues(values);
-			
-			if (values[Matrix.MTRANS_X] > 0) {
-				matrix.postTranslate(-values[Matrix.MTRANS_X], 0);
-			}
-			
-			float maxWidth = -getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X] + getWidth();
-			if (values[Matrix.MTRANS_X] < maxWidth) {
-				matrix.postTranslate(maxWidth - values[Matrix.MTRANS_X], 0);
-			}
-			
-			if (values[Matrix.MTRANS_Y] > 0) {
-				matrix.postTranslate(0, -values[Matrix.MTRANS_Y]);
-			}
-			
-			float maxHeight = -getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_X] + getHeight();
-			if (values[Matrix.MTRANS_Y] < maxHeight) {
-				matrix.postTranslate(0, maxHeight - values[Matrix.MTRANS_Y]);
-			}
-		}
 	});
+	
+	private void checkEdges(Matrix matrix) {
+		float[] values = new float[9];
+		matrix.getValues(values);
+		
+		if (values[Matrix.MTRANS_X] > 0) {
+			matrix.postTranslate(-values[Matrix.MTRANS_X], 0);
+		}
+		
+		float maxWidth = -getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X] + getWidth();
+		if (values[Matrix.MTRANS_X] < maxWidth) {
+			matrix.postTranslate(maxWidth - values[Matrix.MTRANS_X], 0);
+		}
+		
+		if (values[Matrix.MTRANS_Y] > 0) {
+			matrix.postTranslate(0, -values[Matrix.MTRANS_Y]);
+		}
+		
+		float maxHeight = -getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_X] + getHeight();
+		if (values[Matrix.MTRANS_Y] < maxHeight) {
+			matrix.postTranslate(0, maxHeight - values[Matrix.MTRANS_Y]);
+		}
+	}
 
 }
