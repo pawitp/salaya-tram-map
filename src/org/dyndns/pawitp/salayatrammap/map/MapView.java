@@ -9,6 +9,8 @@ import android.widget.ImageView;
 
 public class MapView extends ImageView {
 	
+	private static final float DEFAULT_ZOOM = 0.8F;
+	
 	public MapView(Context context) {
 		super(context);
 	}
@@ -43,8 +45,8 @@ public class MapView extends ImageView {
 			matrix.getValues(values);
 			
 			float scale;
-			if (values[Matrix.MSCALE_X] < 1F) { // scale x == scale y
-				scale = 1F;
+			if (values[Matrix.MSCALE_X] < DEFAULT_ZOOM - 0.01F /* floating point inaccuracy */) { // scale x == scale y
+				scale = DEFAULT_ZOOM;
 			}
 			else {
 				float scaleHeight = getHeight() / (float) getDrawable().getIntrinsicHeight();
