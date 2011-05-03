@@ -20,6 +20,7 @@ public class MapView extends ImageView {
 	private static final String KEY_MATRIX = "matrix";
 	
 	private boolean mRestored = false;
+	private float[] mTmpValues = new float[9];
 	private Scroller mScroller = new Scroller(getContext());
 	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
@@ -77,11 +78,8 @@ public class MapView extends ImageView {
 		super.onSaveInstanceState(); // stupid check
 		
 		Bundle state = new Bundle();
-		
-		float[] values = new float[9];
-		getImageMatrix().getValues(values);
-		
-		state.putFloatArray(KEY_MATRIX, values);
+		getImageMatrix().getValues(mTmpValues);
+		state.putFloatArray(KEY_MATRIX, mTmpValues);
 		return state;
 	}
 
@@ -123,11 +121,10 @@ public class MapView extends ImageView {
 		if (mScroller.computeScrollOffset()) {
 			Matrix matrix = new Matrix(getImageMatrix());
 			
-			float[] values = new float[9];
-			matrix.getValues(values);
+			matrix.getValues(mTmpValues);
 			
-			matrix.postTranslate(-values[Matrix.MTRANS_X] + mScroller.getCurrX(),
-								 -values[Matrix.MTRANS_Y] + mScroller.getCurrY());
+			matrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + mScroller.getCurrX(),
+								 -mTmpValues[Matrix.MTRANS_Y] + mScroller.getCurrY());
 			
 			setImageMatrix(matrix);
 			
@@ -137,10 +134,9 @@ public class MapView extends ImageView {
 		if (mZoomer.compute()) {
 			Matrix matrix = new Matrix(getImageMatrix());
 			
-			float[] values = new float[9];
-			matrix.getValues(values);
+			matrix.getValues(mTmpValues);
 			
-			float scale = mZoomer.getCurrScale() / values[Matrix.MSCALE_X];
+			float scale = mZoomer.getCurrScale() / mTmpValues[Matrix.MSCALE_X];
 			matrix.postScale(scale, scale, mZoomer.getPivotX(), mZoomer.getPivotY());
 			
 			checkEdges(matrix);
@@ -156,18 +152,17 @@ public class MapView extends ImageView {
 		public boolean onDoubleTap(MotionEvent e) {
 			Matrix matrix = new Matrix(getImageMatrix());
 			
-			float[] values = new float[9];
-			matrix.getValues(values);
+			matrix.getValues(mTmpValues);
 			
 			float scale;
-			if (values[Matrix.MSCALE_X] < DEFAULT_ZOOM - 0.01F /* floating point inaccuracy */) { // scale x == scale y
+			if (mTmpValues[Matrix.MSCALE_X] < DEFAULT_ZOOM - 0.01F /* floating point inaccuracy */) { // scale x == scale y
 				scale = DEFAULT_ZOOM;
 			}
 			else {
 				scale = findFullscreenScale();
 			}
 			
-			mZoomer.zoomTo(values[Matrix.MSCALE_X], scale, e.getX(), e.getY());
+			mZoomer.zoomTo(mTmpValues[Matrix.MSCALE_X], scale, e.getX(), e.getY());
 			
 			invalidate();
 			
@@ -189,13 +184,12 @@ public class MapView extends ImageView {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
-			float[] values = new float[9];
-			getImageMatrix().getValues(values);
+			getImageMatrix().getValues(mTmpValues);
 			
-			int minWidth = (int) (-getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X]) + getWidth();
-			int minHeight = (int) (-getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_Y]) + getHeight();
+			int minWidth = (int) (-getDrawable().getIntrinsicWidth() * mTmpValues[Matrix.MSCALE_X]) + getWidth();
+			int minHeight = (int) (-getDrawable().getIntrinsicHeight() * mTmpValues[Matrix.MSCALE_Y]) + getHeight();
 			
-			mScroller.fling((int) values[Matrix.MTRANS_X], (int) values[Matrix.MTRANS_Y],
+			mScroller.fling((int) mTmpValues[Matrix.MTRANS_X], (int) mTmpValues[Matrix.MTRANS_Y],
 							(int) velocityX, (int) velocityY, minWidth, 0, minHeight, 0);
 			
 			invalidate();
@@ -221,40 +215,38 @@ public class MapView extends ImageView {
 	}
 	
 	private void checkEdges(Matrix matrix) {
-		float[] values = new float[9];
-		matrix.getValues(values);
+		matrix.getValues(mTmpValues);
 		
-		if (values[Matrix.MTRANS_X] > 0) {
-			matrix.postTranslate(-values[Matrix.MTRANS_X], 0);
+		if (mTmpValues[Matrix.MTRANS_X] > 0) {
+			matrix.postTranslate(-mTmpValues[Matrix.MTRANS_X], 0);
 		}
 		
-		float maxWidth = -getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X] + getWidth();
-		if (values[Matrix.MTRANS_X] < maxWidth) {
-			matrix.postTranslate(maxWidth - values[Matrix.MTRANS_X], 0);
+		float maxWidth = -getDrawable().getIntrinsicWidth() * mTmpValues[Matrix.MSCALE_X] + getWidth();
+		if (mTmpValues[Matrix.MTRANS_X] < maxWidth) {
+			matrix.postTranslate(maxWidth - mTmpValues[Matrix.MTRANS_X], 0);
 		}
 		
-		if (values[Matrix.MTRANS_Y] > 0) {
-			matrix.postTranslate(0, -values[Matrix.MTRANS_Y]);
+		if (mTmpValues[Matrix.MTRANS_Y] > 0) {
+			matrix.postTranslate(0, -mTmpValues[Matrix.MTRANS_Y]);
 		}
 		
-		float maxHeight = -getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_X] + getHeight();
-		if (values[Matrix.MTRANS_Y] < maxHeight) {
-			matrix.postTranslate(0, maxHeight - values[Matrix.MTRANS_Y]);
+		float maxHeight = -getDrawable().getIntrinsicHeight() * mTmpValues[Matrix.MSCALE_X] + getHeight();
+		if (mTmpValues[Matrix.MTRANS_Y] < maxHeight) {
+			matrix.postTranslate(0, maxHeight - mTmpValues[Matrix.MTRANS_Y]);
 		}
 	}
 	
 	private void checkZoom(Matrix matrix) {
-		float[] values = new float[9];
-		matrix.getValues(values);
+		matrix.getValues(mTmpValues);
 		
 		float minScale = findFullscreenScale();
 		
-		if (values[Matrix.MSCALE_X] > MAX_ZOOM) {
-			float scale = MAX_ZOOM / values[Matrix.MSCALE_X];
+		if (mTmpValues[Matrix.MSCALE_X] > MAX_ZOOM) {
+			float scale = MAX_ZOOM / mTmpValues[Matrix.MSCALE_X];
 			matrix.postScale(scale, scale);
 		}
-		else if (values[Matrix.MSCALE_X] < minScale) {
-			float scale = minScale / values[Matrix.MSCALE_X];
+		else if (mTmpValues[Matrix.MSCALE_X] < minScale) {
+			float scale = minScale / mTmpValues[Matrix.MSCALE_X];
 			matrix.postScale(scale, scale);
 		}
 	}
