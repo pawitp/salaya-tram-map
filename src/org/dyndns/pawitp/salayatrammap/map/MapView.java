@@ -33,6 +33,23 @@ public class MapView extends ImageView {
 		}
 	}
 
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		
+		// Zoom the map out by default and center it
+		// Cannot be done in the constructor because the size of the view is not known yet
+		Matrix matrix = new Matrix();
+		float scale = findFullscreenScale();
+		matrix.setScale(scale, scale);
+		
+		float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
+		float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
+		matrix.postTranslate(width, height);
+		
+		setImageMatrix(matrix);
+	}
+	
 	// TODO: Restore state on orientation change
 	
 	GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -49,9 +66,7 @@ public class MapView extends ImageView {
 				scale = DEFAULT_ZOOM;
 			}
 			else {
-				float scaleHeight = getHeight() / (float) getDrawable().getIntrinsicHeight();
-				float scaleWidth = getWidth() / (float) getDrawable().getIntrinsicWidth();
-				scale = Math.max(scaleHeight, scaleWidth);
+				scale = findFullscreenScale();
 			}
 			
 			float scaleDiff = scale / values[Matrix.MSCALE_X];
@@ -87,6 +102,13 @@ public class MapView extends ImageView {
 		}
 		
 	});
+	
+	private float findFullscreenScale() {
+		// Find a scale such that the image fills the view
+		float scaleHeight = getHeight() / (float) getDrawable().getIntrinsicHeight();
+		float scaleWidth = getWidth() / (float) getDrawable().getIntrinsicWidth();
+		return Math.max(scaleHeight, scaleWidth);
+	}
 	
 	private void checkEdges(Matrix matrix) {
 		float[] values = new float[9];
