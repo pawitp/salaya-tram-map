@@ -79,6 +79,8 @@ public class MapView extends ImageView implements OnClickListener {
 		checkZoom(matrix);
 		checkEdges(matrix);
 		setImageMatrix(matrix);
+		
+		mRestored = true;
 	}
 
 	@Override
