@@ -3,14 +3,11 @@ package org.dyndns.pawitp.salayatrammap.map;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
 public class MapView extends ImageView {
-	
-	private static final String TAG = "MapView";
 	
 	public MapView(Context context) {
 		super(context);
@@ -53,8 +50,6 @@ public class MapView extends ImageView {
 				float scaleHeight = getHeight() / (float) getDrawable().getIntrinsicHeight();
 				float scaleWidth = getWidth() / (float) getDrawable().getIntrinsicWidth();
 				scale = Math.max(scaleHeight, scaleWidth);
-				
-				Log.v(TAG, e.toString());
 			}
 			
 			float scaleDiff = scale / values[Matrix.MSCALE_X];
