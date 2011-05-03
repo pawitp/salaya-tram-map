@@ -3,6 +3,8 @@ package org.dyndns.pawitp.salayatrammap.map;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,6 +17,9 @@ public class MapView extends ImageView {
 	private static final float DEFAULT_ZOOM = 0.8F;
 	private static final float MAX_ZOOM = 1.2F;
 	
+	private static final String KEY_MATRIX = "matrix";
+	
+	private boolean mRestored = false;
 	private Scroller mScroller = new Scroller(getContext());
 	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
@@ -53,6 +58,34 @@ public class MapView extends ImageView {
 	}
 	
 	@Override
+	protected void onRestoreInstanceState(Parcelable state) {
+		super.onRestoreInstanceState(BaseSavedState.EMPTY_STATE); // stupid check
+		
+		Bundle bundle = (Bundle) state;
+		float[] values = bundle.getFloatArray(KEY_MATRIX);
+		
+		Matrix matrix = new Matrix();
+		matrix.setValues(values);
+		
+		checkZoom(matrix);
+		checkEdges(matrix);
+		setImageMatrix(matrix);
+	}
+
+	@Override
+	protected Parcelable onSaveInstanceState() {
+		super.onSaveInstanceState(); // stupid check
+		
+		Bundle state = new Bundle();
+		
+		float[] values = new float[9];
+		getImageMatrix().getValues(values);
+		
+		state.putFloatArray(KEY_MATRIX, values);
+		return state;
+	}
+
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getPointerCount() == 1) {
 			return mGestureDetector.onTouchEvent(event);
@@ -72,15 +105,17 @@ public class MapView extends ImageView {
 		
 		// Zoom the map out by default and center it
 		// Cannot be done in the constructor because the size of the view is not known yet
-		Matrix matrix = new Matrix();
-		float scale = findFullscreenScale();
-		matrix.setScale(scale, scale);
-		
-		float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
-		float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
-		matrix.postTranslate(width, height);
-		
-		setImageMatrix(matrix);
+		if (!mRestored) {
+			Matrix matrix = new Matrix();
+			float scale = findFullscreenScale();
+			matrix.setScale(scale, scale);
+			
+			float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
+			float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
+			matrix.postTranslate(width, height);
+			
+			setImageMatrix(matrix);
+		}
 	}
 
 	@Override
@@ -114,8 +149,6 @@ public class MapView extends ImageView {
 			invalidate();
 		}
 	}
-	
-	// TODO: Restore state on orientation change
 	
 	GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
 
