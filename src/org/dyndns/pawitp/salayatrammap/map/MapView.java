@@ -2,17 +2,21 @@ package org.dyndns.pawitp.salayatrammap.map;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 import android.widget.Scroller;
 
 public class MapView extends ImageView {
 	
 	private static final float DEFAULT_ZOOM = 0.8F;
+	private static final float MAX_ZOOM = 1.2F;
 	
-	private Scroller mScroller;
+	private Scroller mScroller = new Scroller(getContext());
+	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
 	
 	public MapView(Context context) {
 		super(context);
@@ -30,7 +34,21 @@ public class MapView extends ImageView {
 	}
 	
 	public void init() {
-		mScroller = new Scroller(getContext());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+				@Override
+				public boolean onScale(ScaleGestureDetector detector) {
+					Matrix matrix = new Matrix(getImageMatrix());
+					matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+					checkZoom(matrix);
+					checkEdges(matrix);
+					setImageMatrix(matrix);
+					return true;
+				}
+				
+			});
+		}
 	}
 	
 	@Override
@@ -38,8 +56,11 @@ public class MapView extends ImageView {
 		if (event.getPointerCount() == 1) {
 			return mGestureDetector.onTouchEvent(event);
 		}
+		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			return mScaleGestureDetector.onTouchEvent(event);
+		}
 		else {
-			return false; // TODO: Multitouch
+			return false;
 		}
 	}
 
@@ -178,6 +199,22 @@ public class MapView extends ImageView {
 		float maxHeight = -getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_X] + getHeight();
 		if (values[Matrix.MTRANS_Y] < maxHeight) {
 			matrix.postTranslate(0, maxHeight - values[Matrix.MTRANS_Y]);
+		}
+	}
+	
+	private void checkZoom(Matrix matrix) {
+		float[] values = new float[9];
+		matrix.getValues(values);
+		
+		float minScale = findFullscreenScale();
+		
+		if (values[Matrix.MSCALE_X] > MAX_ZOOM) {
+			float scale = MAX_ZOOM / values[Matrix.MSCALE_X];
+			matrix.postScale(scale, scale);
+		}
+		else if (values[Matrix.MSCALE_X] < minScale) {
+			float scale = minScale / values[Matrix.MSCALE_X];
+			matrix.postScale(scale, scale);
 		}
 	}
 
