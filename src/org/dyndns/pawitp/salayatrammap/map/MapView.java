@@ -16,6 +16,7 @@ public class MapView extends ImageView {
 	private static final float MAX_ZOOM = 1.2F;
 	
 	private Scroller mScroller = new Scroller(getContext());
+	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
 	
 	public MapView(Context context) {
@@ -83,7 +84,7 @@ public class MapView extends ImageView {
 	}
 
 	@Override
-	public void computeScroll() {
+	public void computeScroll() {		
 		if (mScroller.computeScrollOffset()) {
 			Matrix matrix = new Matrix(getImageMatrix());
 			
@@ -93,6 +94,21 @@ public class MapView extends ImageView {
 			matrix.postTranslate(-values[Matrix.MTRANS_X] + mScroller.getCurrX(),
 								 -values[Matrix.MTRANS_Y] + mScroller.getCurrY());
 			
+			setImageMatrix(matrix);
+			
+			invalidate();
+		}
+		
+		if (mZoomer.compute()) {
+			Matrix matrix = new Matrix(getImageMatrix());
+			
+			float[] values = new float[9];
+			matrix.getValues(values);
+			
+			float scale = mZoomer.getCurrScale() / values[Matrix.MSCALE_X];
+			matrix.postScale(scale, scale, mZoomer.getPivotX(), mZoomer.getPivotY());
+			
+			checkEdges(matrix);
 			setImageMatrix(matrix);
 			
 			invalidate();
@@ -118,18 +134,10 @@ public class MapView extends ImageView {
 				scale = findFullscreenScale();
 			}
 			
-			float scaleDiff = scale / values[Matrix.MSCALE_X];
-			matrix.postScale(scaleDiff, scaleDiff); // TODO: Animation
+			mZoomer.zoomTo(values[Matrix.MSCALE_X], scale, e.getX(), e.getY());
 			
-			float hWidth = getWidth() / 2;
-			float hHeight = getHeight() / 2;
-			float transX = (e.getX() > hWidth) ? -e.getX() * scaleDiff + hWidth : hWidth - e.getX() * scaleDiff;
-			float transY = (e.getY() > hHeight) ? -e.getY() * scaleDiff + hHeight : hHeight - e.getY() * scaleDiff;
-			matrix.postTranslate(transX, transY);
+			invalidate();
 			
-			checkEdges(matrix);
-			
-			setImageMatrix(matrix);
 			return true;
 		}
 
