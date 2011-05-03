@@ -6,21 +6,31 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
+import android.widget.Scroller;
 
 public class MapView extends ImageView {
 	
 	private static final float DEFAULT_ZOOM = 0.8F;
 	
+	private Scroller mScroller;
+	
 	public MapView(Context context) {
 		super(context);
+		init();
 	}
 
 	public MapView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		init();
 	}
 
 	public MapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		init();
+	}
+	
+	public void init() {
+		mScroller = new Scroller(getContext());
 	}
 	
 	@Override
@@ -48,6 +58,23 @@ public class MapView extends ImageView {
 		matrix.postTranslate(width, height);
 		
 		setImageMatrix(matrix);
+	}
+
+	@Override
+	public void computeScroll() {
+		if (mScroller.computeScrollOffset()) {
+			Matrix matrix = new Matrix(getImageMatrix());
+			
+			float[] values = new float[9];
+			matrix.getValues(values);
+			
+			matrix.postTranslate(-values[Matrix.MTRANS_X] + mScroller.getCurrX(),
+								 -values[Matrix.MTRANS_Y] + mScroller.getCurrY());
+			
+			setImageMatrix(matrix);
+			
+			invalidate();
+		}
 	}
 	
 	// TODO: Restore state on orientation change
@@ -97,8 +124,28 @@ public class MapView extends ImageView {
 		}
 
 		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			float[] values = new float[9];
+			getImageMatrix().getValues(values);
+			
+			int minWidth = (int) (-getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X]) + getWidth();
+			int minHeight = (int) (-getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_Y]) + getHeight();
+			
+			mScroller.fling((int) values[Matrix.MTRANS_X], (int) values[Matrix.MTRANS_Y],
+							(int) velocityX, (int) velocityY, minWidth, 0, minHeight, 0);
+			
+			invalidate();
+			
+			return true;
+		}
+
+		@Override
 		public boolean onDown(MotionEvent e) {
-			return true; // Required so that events are triggered
+			if (!mScroller.isFinished()) { // Abort fling on user touch
+				mScroller.abortAnimation();
+			}
+			return true;
 		}
 		
 	});
