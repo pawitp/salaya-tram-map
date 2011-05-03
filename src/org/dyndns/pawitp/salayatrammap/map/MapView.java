@@ -55,6 +55,13 @@ public class MapView extends ImageView implements OnClickListener {
 				@Override
 				public boolean onScale(ScaleGestureDetector detector) {
 					Matrix matrix = new Matrix(getImageMatrix());
+					
+					matrix.getValues(mTmpValues);
+					if ((mTmpValues[Matrix.MSCALE_X] == MAX_ZOOM && detector.getScaleFactor() > 1) ||
+						(mTmpValues[Matrix.MSCALE_X] == findFullscreenScale() && detector.getScaleFactor() < 1) ) {
+						return true;
+					}
+					
 					matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
 					checkZoom(matrix);
 					checkEdges(matrix);
