@@ -57,8 +57,10 @@ public class MapView extends ImageView {
 			float scaleDiff = scale / values[Matrix.MSCALE_X];
 			matrix.postScale(scaleDiff, scaleDiff); // TODO: Animation
 			
-			float transX = (-e.getX() + getWidth() / 2) * scale;
-			float transY = (-e.getY() + getHeight() / 2) * scale;
+			float hWidth = getWidth() / 2;
+			float hHeight = getHeight() / 2;
+			float transX = (e.getX() > hWidth) ? -e.getX() * scaleDiff + hWidth : hWidth - e.getX() * scaleDiff;
+			float transY = (e.getY() > hHeight) ? -e.getY() * scaleDiff + hHeight : hHeight - e.getY() * scaleDiff;
 			matrix.postTranslate(transX, transY);
 			
 			checkEdges(matrix);
