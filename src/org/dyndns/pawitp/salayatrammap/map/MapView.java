@@ -78,14 +78,9 @@ public class MapView extends ImageView implements OnClickListener {
 		super.onRestoreInstanceState(BaseSavedState.EMPTY_STATE); // stupid check
 		
 		Bundle bundle = (Bundle) state;
-		float[] values = bundle.getFloatArray(KEY_MATRIX);
+		mTmpValues = bundle.getFloatArray(KEY_MATRIX);
 		
-		Matrix matrix = new Matrix();
-		matrix.setValues(values);
-		
-		checkZoom(matrix);
-		checkEdges(matrix);
-		setImageMatrix(matrix);
+		// Check zoom, edges later when widths and heights are initialized (onLayout)
 		
 		mRestored = true;
 	}
@@ -116,6 +111,13 @@ public class MapView extends ImageView implements OnClickListener {
 			float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
 			matrix.postTranslate(width, height);
 			
+			setImageMatrix(matrix);
+		}
+		else {
+			Matrix matrix = new Matrix();
+			matrix.setValues(mTmpValues);
+			checkZoom(matrix);
+			checkEdges(matrix);
 			setImageMatrix(matrix);
 		}
 	}
