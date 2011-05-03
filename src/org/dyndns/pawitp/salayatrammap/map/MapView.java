@@ -9,13 +9,16 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Scroller;
 
-public class MapView extends ImageView {
+public class MapView extends ImageView implements OnClickListener {
 	
 	private static final float DEFAULT_ZOOM = 0.8F;
 	private static final float MAX_ZOOM = 1.2F;
+	private static final float TRACKBALL_FACTOR = 10F;
 	
 	private static final String KEY_MATRIX = "matrix";
 	
@@ -41,6 +44,11 @@ public class MapView extends ImageView {
 	}
 	
 	public void init() {
+		setFocusable(true);
+		requestFocus();
+		setClickable(true);
+		setOnClickListener(this);
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
@@ -117,6 +125,40 @@ public class MapView extends ImageView {
 	}
 	
 	@Override
+	public boolean onTrackballEvent(MotionEvent event) {
+		if (event.getX() != 0 || event.getY() != 0) {
+			getImageMatrix().getValues(mTmpValues);
+			mScroller.startScroll((int) mTmpValues[Matrix.MTRANS_X], (int) mTmpValues[Matrix.MTRANS_Y],
+								  (int) (-event.getX() * TRACKBALL_FACTOR), (int) (-event.getY() * TRACKBALL_FACTOR));
+			invalidate();
+			return true;
+		}
+		else {
+			return super.onTrackballEvent(event);
+		}
+		
+	}
+	
+	@Override
+	public void onClick(View v) {
+		Matrix matrix = new Matrix(getImageMatrix());
+		
+		matrix.getValues(mTmpValues);
+		
+		float scale;
+		if (mTmpValues[Matrix.MSCALE_X] < DEFAULT_ZOOM - 0.01F /* floating point inaccuracy */) { // scale x == scale y
+			scale = DEFAULT_ZOOM;
+		}
+		else {
+			scale = findFullscreenScale();
+		}
+		
+		mZoomer.zoomTo(mTmpValues[Matrix.MSCALE_X], scale, getWidth() / 2, getHeight() / 2);
+		
+		invalidate();	
+	}
+
+	@Override
 	public void computeScroll() {		
 		if (mScroller.computeScrollOffset()) {
 			Matrix matrix = new Matrix(getImageMatrix());
@@ -126,6 +168,7 @@ public class MapView extends ImageView {
 			matrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + mScroller.getCurrX(),
 								 -mTmpValues[Matrix.MTRANS_Y] + mScroller.getCurrY());
 			
+			checkEdges(matrix);
 			setImageMatrix(matrix);
 			
 			invalidate();
