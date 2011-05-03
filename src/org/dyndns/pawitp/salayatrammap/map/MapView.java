@@ -84,19 +84,6 @@ public class MapView extends ImageView {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getPointerCount() == 1) {
-			return mGestureDetector.onTouchEvent(event);
-		}
-		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			return mScaleGestureDetector.onTouchEvent(event);
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
@@ -116,6 +103,19 @@ public class MapView extends ImageView {
 		}
 	}
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getPointerCount() == 1) {
+			return mGestureDetector.onTouchEvent(event);
+		}
+		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			return mScaleGestureDetector.onTouchEvent(event);
+		}
+		else {
+			return false;
+		}
+	}
+	
 	@Override
 	public void computeScroll() {		
 		if (mScroller.computeScrollOffset()) {
