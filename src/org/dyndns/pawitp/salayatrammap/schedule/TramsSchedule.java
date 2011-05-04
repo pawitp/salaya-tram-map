@@ -61,8 +61,8 @@ public class TramsSchedule {
 	public long getNextUpdateTime() {
 		long updateTime = Long.MAX_VALUE;
 		
-		for (int i = 0; i < mTramCarSchedules.length; i++) {
-			long tramUpdateTime = mTramCarSchedules[i].getUpdateTime();
+		for (TramCarSchedule schedule : mTramCarSchedules) {
+			long tramUpdateTime = schedule.getUpdateTime();
 			if (tramUpdateTime < updateTime) {
 				updateTime = tramUpdateTime;
 			}

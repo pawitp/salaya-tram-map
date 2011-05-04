@@ -85,8 +85,9 @@ public class TramCarSchedule {
 		Time tram = new Time(now);
 		
 		boolean found = false;
+		int len = mSchedule.length;
 		int i;
-		for (i = 0; i < mSchedule.length; i++) {
+		for (i = 0; i < len; i++) {
 			tram.hour = mSchedule[i][0];
 			tram.minute = mSchedule[i][1];
 			
