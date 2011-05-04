@@ -15,8 +15,8 @@ public class MainActivity extends Activity {
 	
 	static final String TAG = "MainActivity";
 	
-	TramsSchedule mTramsSchedule;
-	Handler mHandler;
+	private TramsSchedule mTramsSchedule;
+	private Handler mHandler;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
