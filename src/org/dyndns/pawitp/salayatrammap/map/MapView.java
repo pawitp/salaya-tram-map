@@ -24,6 +24,7 @@ public class MapView extends ImageView implements OnClickListener {
 	
 	private boolean mRestored = false;
 	private float[] mTmpValues = new float[9];
+	private Matrix mMatrix = new Matrix(); // for using in manipulate, don't create a new matrix everytime to reduce GC
 	private Scroller mScroller = new Scroller(getContext());
 	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
@@ -54,18 +55,18 @@ public class MapView extends ImageView implements OnClickListener {
 
 				@Override
 				public boolean onScale(ScaleGestureDetector detector) {
-					Matrix matrix = new Matrix(getImageMatrix());
+					mMatrix.set(getImageMatrix());
 					
-					matrix.getValues(mTmpValues);
+					mMatrix.getValues(mTmpValues);
 					if ((mTmpValues[Matrix.MSCALE_X] == MAX_ZOOM && detector.getScaleFactor() > 1) ||
 						(mTmpValues[Matrix.MSCALE_X] == findFullscreenScale() && detector.getScaleFactor() < 1) ) {
 						return true;
 					}
 					
-					matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
-					checkZoom(matrix);
-					checkEdges(matrix);
-					setImageMatrix(matrix);
+					mMatrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+					checkZoom(mMatrix);
+					checkEdges(mMatrix);
+					setImageMatrix(mMatrix);
 					return true;
 				}
 				
@@ -103,22 +104,22 @@ public class MapView extends ImageView implements OnClickListener {
 		// Zoom the map out by default and center it
 		// Cannot be done in the constructor because the size of the view is not known yet
 		if (!mRestored) {
-			Matrix matrix = new Matrix();
+			mMatrix.set(getImageMatrix());
 			float scale = findFullscreenScale();
-			matrix.setScale(scale, scale);
+			mMatrix.setScale(scale, scale);
 			
 			float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
 			float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
-			matrix.postTranslate(width, height);
+			mMatrix.postTranslate(width, height);
 			
-			setImageMatrix(matrix);
+			setImageMatrix(mMatrix);
 		}
 		else {
-			Matrix matrix = new Matrix();
-			matrix.setValues(mTmpValues);
-			checkZoom(matrix);
-			checkEdges(matrix);
-			setImageMatrix(matrix);
+			mMatrix.set(getImageMatrix());
+			mMatrix.setValues(mTmpValues);
+			checkZoom(mMatrix);
+			checkEdges(mMatrix);
+			setImageMatrix(mMatrix);
 		}
 	}
 
@@ -149,9 +150,9 @@ public class MapView extends ImageView implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		Matrix matrix = new Matrix(getImageMatrix());
+		mMatrix.set(getImageMatrix());
 		
-		matrix.getValues(mTmpValues);
+		mMatrix.getValues(mTmpValues);
 		
 		float scale;
 		if (mTmpValues[Matrix.MSCALE_X] < DEFAULT_ZOOM - 0.01F /* floating point inaccuracy */) { // scale x == scale y
@@ -169,9 +170,9 @@ public class MapView extends ImageView implements OnClickListener {
 	@Override
 	public void computeScroll() {		
 		if (mScroller.computeScrollOffset()) {
-			Matrix matrix = new Matrix(getImageMatrix());
+			mMatrix.set(getImageMatrix());
 			
-			matrix.getValues(mTmpValues);
+			mMatrix.getValues(mTmpValues);
 			
 			int currX = mScroller.getCurrX();
 			int currY = mScroller.getCurrY();
@@ -180,25 +181,25 @@ public class MapView extends ImageView implements OnClickListener {
 				mScroller.abortAnimation();
 			}
 			else {
-				matrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + currX,
+				mMatrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + currX,
 									 -mTmpValues[Matrix.MTRANS_Y] + currY);
 				
-				checkEdges(matrix);
-				setImageMatrix(matrix);
+				checkEdges(mMatrix);
+				setImageMatrix(mMatrix);
 			}
 			invalidate();
 		}
 		
 		if (mZoomer.compute()) {
-			Matrix matrix = new Matrix(getImageMatrix());
+			mMatrix.set(getImageMatrix());
 			
-			matrix.getValues(mTmpValues);
+			mMatrix.getValues(mTmpValues);
 			
 			float scale = mZoomer.getCurrScale() / mTmpValues[Matrix.MSCALE_X];
-			matrix.postScale(scale, scale, mZoomer.getPivotX(), mZoomer.getPivotY());
+			mMatrix.postScale(scale, scale, mZoomer.getPivotX(), mZoomer.getPivotY());
 			
-			checkEdges(matrix);
-			setImageMatrix(matrix);
+			checkEdges(mMatrix);
+			setImageMatrix(mMatrix);
 			
 			invalidate();
 		}
