@@ -28,6 +28,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private Scroller mScroller = new Scroller(getContext());
 	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
+	private GestureDetector mGestureDetector; // Instantiated later because pre-froyo needs a different constructor
 	
 	public MapView(Context context) {
 		super(context);
@@ -51,6 +52,8 @@ public class MapView extends ImageView implements OnClickListener {
 		setOnClickListener(this);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mGestureDetector = new GestureDetector(getContext(), mGestureDetectorListener, null, true);
+			
 			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
 				@Override
@@ -71,6 +74,9 @@ public class MapView extends ImageView implements OnClickListener {
 				}
 				
 			});
+		}
+		else {
+			mGestureDetector = new GestureDetector(getContext(), mGestureDetectorListener);
 		}
 	}
 	
@@ -205,7 +211,7 @@ public class MapView extends ImageView implements OnClickListener {
 		}
 	}
 	
-	GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+	GestureDetector.SimpleOnGestureListener mGestureDetectorListener = new GestureDetector.SimpleOnGestureListener() {
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
@@ -264,7 +270,7 @@ public class MapView extends ImageView implements OnClickListener {
 			return true;
 		}
 		
-	}, null, true);
+	};
 	
 	private float findFullscreenScale() {
 		// Find a scale such that the image fills the view
