@@ -124,15 +124,12 @@ public class MapView extends ImageView implements OnClickListener {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getPointerCount() == 1) {
-			return mGestureDetector.onTouchEvent(event);
+		boolean ret = false;
+		ret = mGestureDetector.onTouchEvent(event); // feed it multi-touch event as well so it knows what to ignore
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			ret |= mScaleGestureDetector.onTouchEvent(event);
 		}
-		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			return mScaleGestureDetector.onTouchEvent(event);
-		}
-		else {
-			return false;
-		}
+		return ret;
 	}
 	
 	@Override
@@ -266,7 +263,7 @@ public class MapView extends ImageView implements OnClickListener {
 			return true;
 		}
 		
-	});
+	}, null, true);
 	
 	private float findFullscreenScale() {
 		// Find a scale such that the image fills the view
