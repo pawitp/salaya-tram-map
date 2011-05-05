@@ -10,6 +10,7 @@ import org.dyndns.pawitp.salayatrammap.Utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 public class TramDbHelper {
 	
@@ -39,34 +40,24 @@ public class TramDbHelper {
 			return;
 		}
 		
-		mDb = mContext.openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null);
+		try {
+			String path = mContext.getDatabasePath(DATABASE_NAME).getPath();
+        	mDb = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
+		}
+		catch (SQLiteException e) { // file not found
+			copyDatabase();
+		}
 		
 		if (mDb.getVersion() != DATABASE_VERSION) {
-			if (mUpgrading) {
-				// Recursive upgrade!?
-				throw new IllegalStateException("Recursive upgrade");
-			}
-			
-			try {
-				// Replace database with one from the apk
-				mUpgrading = true;
-				close();
-				
-				InputStream is = mContext.getResources().openRawResource(R.raw.database);
-				Utils.writeInputStreamToFile(is, mContext.getDatabasePath(DATABASE_NAME));
-				
-				open();
-			} catch (FileNotFoundException e) {
-				throw new RuntimeException(e);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			copyDatabase();
 		}
 	}
 	
 	public void close() {
-		mDb.close();
-		mDb = null;
+		if (mDb != null) {
+			mDb.close();
+			mDb = null;	
+		}
 	}
 	
 	// limit is dx + dy NOT pythagorus
@@ -78,4 +69,28 @@ public class TramDbHelper {
 		
 		return cursor;
 	}
+
+	private void copyDatabase() {
+		try {
+			if (mUpgrading) {
+				// Recursive upgrade!?
+				throw new IllegalStateException("Recursive upgrade");
+			}
+			
+			// Replace database with one from the apk
+			mUpgrading = true;
+			
+			close();
+			
+			InputStream is = mContext.getResources().openRawResource(R.raw.database);
+			Utils.writeInputStreamToFile(is, mContext.getDatabasePath(DATABASE_NAME));
+			
+			open();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }
