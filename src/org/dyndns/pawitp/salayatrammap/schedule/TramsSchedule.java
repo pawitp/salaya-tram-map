@@ -51,7 +51,9 @@ public class TramsSchedule {
 	};
 	
 	public TramsSchedule() {
-		initSchedules();
+		mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule();
+		mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule();
+		mTramCarSchedules[TRAM_RED] = new TramCarSchedule();
 	}
 	
 	public TramCarSchedule getSchedule(int tram) {
@@ -85,21 +87,19 @@ public class TramsSchedule {
 		}
 	}
 	
+	// Always call before using any of my functions!
+	// this functions also triggers calculation of next tram (for use with next update time)
 	public void updateSchedules() {
-		// Maybe check if the date is changed, but it seems expensive compared to the initialization procedure
-		initSchedules();
-	}
-	
-	private void initSchedules() {
 		if (!isHoliday()) {
-			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_NORMAL_SCHEDULE);
-			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_NORMAL_SCHEDULE);
-			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule	
+			mTramCarSchedules[TRAM_GREEN].updateSchedule(GREEN_NORMAL_SCHEDULE);
+			mTramCarSchedules[TRAM_BLUE].updateSchedule(OTHER_NORMAL_SCHEDULE);
+			mTramCarSchedules[TRAM_RED].updateSchedule(OTHER_NORMAL_SCHEDULE);	
 		}
 		else {
-			mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule(GREEN_HOLIDAY_SCHEDULE);
-			mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule(OTHER_HOLIDAY_SCHEDULE);
-			mTramCarSchedules[TRAM_RED] = mTramCarSchedules[TRAM_BLUE]; // Runs on the same schedule
+			mTramCarSchedules[TRAM_GREEN].updateSchedule(GREEN_HOLIDAY_SCHEDULE);
+			mTramCarSchedules[TRAM_BLUE].updateSchedule(OTHER_HOLIDAY_SCHEDULE);
+			mTramCarSchedules[TRAM_RED].updateSchedule(OTHER_HOLIDAY_SCHEDULE);
 		}
 	}
+	
 }

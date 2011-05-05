@@ -8,11 +8,17 @@ public class TramCarSchedule {
 	private static final String TAG = "TramCarSchedule";
 	
 	private static final long TRAM_ROUND_TIME = 600000; // 10 minutes
+	private static final int NO_MORE_TRAM = -1;
 	
-	Integer[][] mSchedule;
+	private Integer[][] mSchedule;
+	private int mNextTram; // cache, always update before use
 	
-	public TramCarSchedule(Integer[][] schedule) {
+	public TramCarSchedule() { }
+	
+	public void updateSchedule(Integer[][] schedule) {
 		mSchedule = schedule;
+		
+		updateNextTram();
 	}
 	
 	public Time getLastTram() throws NoTramLeftException, NoMoreTramException {
@@ -76,7 +82,9 @@ public class TramCarSchedule {
 		}
 	}
 	
-	private int locateNextTram() throws NoMoreTramException {
+	// Call before using any of my functions!
+	// (normally called by updateSchedule)
+	public void updateNextTram() {
 		Log.v(TAG, "Calculating next tram");
 		Time now = new Time();
 		now.setToNow();
@@ -98,11 +106,20 @@ public class TramCarSchedule {
 			}
 		}
 		
-		if (!found) {
+		if (found) {
+			mNextTram = i;
+		}
+		else {
+			mNextTram = NO_MORE_TRAM;
+		}
+	}
+	
+	private int locateNextTram() throws NoMoreTramException {
+		if (mNextTram == NO_MORE_TRAM) {
 			throw new NoMoreTramException();
 		}
 		
-		return i;
+		return mNextTram;
 	}
 	
 	private Time tramTimeToTime(Integer[] time) {
