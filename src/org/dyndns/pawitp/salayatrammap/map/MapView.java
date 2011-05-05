@@ -1,11 +1,13 @@
 package org.dyndns.pawitp.salayatrammap.map;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -16,9 +18,12 @@ import android.widget.Scroller;
 
 public class MapView extends ImageView implements OnClickListener {
 	
+	private static final String TAG = "MapView";
+	
 	private static final float DEFAULT_ZOOM = 0.8F;
 	private static final float MAX_ZOOM = 1.2F;
 	private static final float TRACKBALL_FACTOR = 10F;
+	private static final int SEARCH_LIMIT = 40; // Limit for searching nearest stop, see TramDbHelper for more info
 	
 	private static final String KEY_MATRIX = "matrix";
 	
@@ -29,6 +34,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private Zoomer mZoomer = new Zoomer();
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
 	private GestureDetector mGestureDetector; // Instantiated later because pre-froyo needs a different constructor
+	private TramDbHelper mDbHelper = new TramDbHelper(getContext());
 	
 	public MapView(Context context) {
 		super(context);
@@ -50,6 +56,8 @@ public class MapView extends ImageView implements OnClickListener {
 		requestFocus();
 		setClickable(true);
 		setOnClickListener(this);
+		
+		mDbHelper.open();
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mGestureDetector = new GestureDetector(getContext(), mGestureDetectorListener, null, true);
@@ -268,6 +276,21 @@ public class MapView extends ImageView implements OnClickListener {
 				mScroller.abortAnimation();
 			}
 			return true;
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			getImageMatrix().getValues(mTmpValues);
+			int imageX = (int)((e.getX() - mTmpValues[Matrix.MTRANS_X]) / mTmpValues[Matrix.MSCALE_X]);
+			int imageY = (int)((e.getY() - mTmpValues[Matrix.MTRANS_Y]) / mTmpValues[Matrix.MSCALE_Y]);
+			
+			Log.v(TAG, "Long press: x: " + imageX + " y: " + imageY);
+			
+			Cursor cursor = mDbHelper.findNearestStop(imageX, imageY, (int) (SEARCH_LIMIT / mTmpValues[Matrix.MSCALE_X]));
+			if (cursor.getCount() > 0) {
+				Log.v(TAG, "Stop: " + cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID)) + " d: " + cursor.getInt(3));
+			}
+			cursor.close();
 		}
 		
 	};
