@@ -45,6 +45,7 @@ public class TramDbHelper {
         	mDb = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
 		}
 		catch (SQLiteException e) { // file not found
+			mDb = mContext.openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null); // create the folder if not exist
 			copyDatabase();
 		}
 		
