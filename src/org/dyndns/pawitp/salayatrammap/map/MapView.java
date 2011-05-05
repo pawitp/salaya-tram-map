@@ -23,7 +23,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private static final float DEFAULT_ZOOM = 0.8F;
 	private static final float MAX_ZOOM = 1.2F;
 	private static final float TRACKBALL_FACTOR = 10F;
-	private static final int SEARCH_LIMIT = 40; // Limit for searching nearest stop, see TramDbHelper for more info
+	private static final int SEARCH_LIMIT = 50; // Limit for searching nearest stop, see TramDbHelper for more info
 	
 	private static final String KEY_MATRIX = "matrix";
 	
