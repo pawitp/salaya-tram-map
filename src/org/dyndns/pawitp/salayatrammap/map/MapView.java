@@ -277,20 +277,33 @@ public class MapView extends ImageView implements OnClickListener {
 			}
 			return true;
 		}
-
+		
 		@Override
 		public void onLongPress(MotionEvent e) {
+			onSingleTapConfirmed(e);
+		}
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e) {
 			getImageMatrix().getValues(mTmpValues);
 			int imageX = (int)((e.getX() - mTmpValues[Matrix.MTRANS_X]) / mTmpValues[Matrix.MSCALE_X]);
 			int imageY = (int)((e.getY() - mTmpValues[Matrix.MTRANS_Y]) / mTmpValues[Matrix.MSCALE_Y]);
 			
-			Log.v(TAG, "Long press: x: " + imageX + " y: " + imageY);
+			Log.v(TAG, "Tap/Long press: x: " + imageX + " y: " + imageY);
 			
 			Cursor cursor = mDbHelper.findNearestStop(imageX, imageY, (int) (SEARCH_LIMIT / mTmpValues[Matrix.MSCALE_X]));
-			if (cursor.getCount() > 0) {
-				Log.v(TAG, "Stop: " + cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID)) + " d: " + cursor.getInt(3));
+			try {
+				if (cursor.getCount() > 0) {
+					Log.v(TAG, "Stop: " + cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID)) + " d: " + cursor.getInt(3));
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
-			cursor.close();
+			finally {
+				cursor.close();
+			}
 		}
 		
 	};
