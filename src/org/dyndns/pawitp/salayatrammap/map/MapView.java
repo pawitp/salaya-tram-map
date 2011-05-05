@@ -2,7 +2,9 @@ package org.dyndns.pawitp.salayatrammap.map;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -35,6 +37,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private ScaleGestureDetector mScaleGestureDetector; // Cannot be instantiated here in order to support pre-froyo
 	private GestureDetector mGestureDetector; // Instantiated later because pre-froyo needs a different constructor
 	private TramDbHelper mDbHelper = new TramDbHelper(getContext());
+	private StopInfo mStopInfo = new StopInfo();
 	
 	public MapView(Context context) {
 		super(context);
@@ -219,6 +222,23 @@ public class MapView extends ImageView implements OnClickListener {
 		}
 	}
 	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		
+		// Draw stop info
+		if (mStopInfo.enabled) {
+			getImageMatrix().getValues(mTmpValues);
+			
+			Log.v(TAG, "Draw: x: " + mStopInfo.x + " y: " + mStopInfo.y);
+			
+			float textX = mStopInfo.x * mTmpValues[Matrix.MSCALE_X] + mTmpValues[Matrix.MTRANS_X];
+			float textY = mStopInfo.y * mTmpValues[Matrix.MSCALE_Y] + mTmpValues[Matrix.MTRANS_Y];
+			
+			canvas.drawText(mStopInfo.name_en, textX, textY, new Paint());
+		}
+	}
+	
 	GestureDetector.SimpleOnGestureListener mGestureDetectorListener = new GestureDetector.SimpleOnGestureListener() {
 
 		@Override
@@ -285,6 +305,11 @@ public class MapView extends ImageView implements OnClickListener {
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
+			invalidate();
+			
+			// Disable old display regardless of whether we get a new one or not
+			mStopInfo.enabled = false;
+			
 			getImageMatrix().getValues(mTmpValues);
 			int imageX = (int)((e.getX() - mTmpValues[Matrix.MTRANS_X]) / mTmpValues[Matrix.MSCALE_X]);
 			int imageY = (int)((e.getY() - mTmpValues[Matrix.MTRANS_Y]) / mTmpValues[Matrix.MSCALE_Y]);
@@ -294,7 +319,15 @@ public class MapView extends ImageView implements OnClickListener {
 			Cursor cursor = mDbHelper.findNearestStop(imageX, imageY, (int) (SEARCH_LIMIT / mTmpValues[Matrix.MSCALE_X]));
 			try {
 				if (cursor.getCount() > 0) {
-					Log.v(TAG, "Stop: " + cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID)) + " d: " + cursor.getInt(3));
+					mStopInfo.enabled = true;
+					mStopInfo.id = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID));
+					mStopInfo.name_th = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_TH));
+					mStopInfo.name_en = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_EN));
+					mStopInfo.x = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_X));
+					mStopInfo.y = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_Y));
+					
+					Log.v(TAG, "Stop: " + mStopInfo.id + " d: " + cursor.getString(cursor.getColumnIndex("d")));
+					
 					return true;
 				}
 				else {
@@ -352,4 +385,13 @@ public class MapView extends ImageView implements OnClickListener {
 		}
 	}
 
+	private class StopInfo {
+		public boolean enabled = false;
+		public int id;
+		public String name_th;
+		public String name_en;
+		public int x;
+		public int y;
+	}
+	
 }

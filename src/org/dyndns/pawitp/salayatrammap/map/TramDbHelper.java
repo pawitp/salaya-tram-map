@@ -62,7 +62,7 @@ public class TramDbHelper {
 	
 	// limit is dx + dy NOT pythagorus
 	public Cursor findNearestStop(int x, int y, int limit) {
-		String query = String.format("SELECT _id, name_th, name_en, abs(%d - x) + abs(%d - y) AS d FROM stops WHERE d < %d ORDER BY d ASC LIMIT 1", x, y, limit);
+		String query = String.format("SELECT _id, name_th, name_en, x, y, abs(%d - x) + abs(%d - y) AS d FROM stops WHERE d < %d ORDER BY d ASC LIMIT 1", x, y, limit);
 		Cursor cursor = mDb.rawQuery(query, null);
 		
 		cursor.moveToFirst();
