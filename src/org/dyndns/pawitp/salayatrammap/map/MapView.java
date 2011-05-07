@@ -1,10 +1,14 @@
 package org.dyndns.pawitp.salayatrammap.map;
 
+import org.dyndns.pawitp.salayatrammap.R;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -27,6 +31,11 @@ public class MapView extends ImageView implements OnClickListener {
 	private static final float TRACKBALL_FACTOR = 10F;
 	private static final int SEARCH_LIMIT = 50; // Limit for searching nearest stop, see TramDbHelper for more info
 	
+	// for drawing stop info
+	private static final float TEXT_SIZE = 15F;
+	private static final float LINE_SPACING = 5F;
+	private static final float TEXT_Y_SHIFT = 12F;
+	
 	private static final String KEY_MATRIX = "matrix";
 	
 	private boolean mRestored = false;
@@ -38,6 +47,14 @@ public class MapView extends ImageView implements OnClickListener {
 	private GestureDetector mGestureDetector; // Instantiated later because pre-froyo needs a different constructor
 	private TramDbHelper mDbHelper = new TramDbHelper(getContext());
 	private StopInfo mStopInfo = new StopInfo();
+	
+	// for drawing stop info
+	private Paint mTextPaint = new Paint();
+	private Rect mRectTh = new Rect();
+	private Rect mRectEn = new Rect();
+	private NinePatchDrawable mDrawableStopInfoBg = (NinePatchDrawable) getResources().getDrawable(R.drawable.bubble);
+	private float mDensity = getContext().getResources().getDisplayMetrics().density;
+	private float mLineSpacing = LINE_SPACING * mDensity;
 	
 	public MapView(Context context) {
 		super(context);
@@ -89,6 +106,10 @@ public class MapView extends ImageView implements OnClickListener {
 		else {
 			mGestureDetector = new GestureDetector(getContext(), mGestureDetectorListener);
 		}
+		
+		// For drawing stop info
+		mTextPaint.setTextSize(TEXT_SIZE * mDensity);
+		mTextPaint.setAntiAlias(true);
 	}
 	
 	@Override
@@ -230,12 +251,38 @@ public class MapView extends ImageView implements OnClickListener {
 		if (mStopInfo.enabled) {
 			getImageMatrix().getValues(mTmpValues);
 			
-			Log.v(TAG, "Draw: x: " + mStopInfo.x + " y: " + mStopInfo.y);
-			
 			float textX = mStopInfo.x * mTmpValues[Matrix.MSCALE_X] + mTmpValues[Matrix.MTRANS_X];
-			float textY = mStopInfo.y * mTmpValues[Matrix.MSCALE_Y] + mTmpValues[Matrix.MTRANS_Y];
+			float textY = mStopInfo.y * mTmpValues[Matrix.MSCALE_Y] + mTmpValues[Matrix.MTRANS_Y] - TEXT_Y_SHIFT * mTmpValues[Matrix.MSCALE_Y];
 			
-			canvas.drawText(mStopInfo.name_en, textX, textY, new Paint());
+			String textTh = mStopInfo.name_th;
+			String textEn = mStopInfo.name_en;
+			float hWidthTh = mTextPaint.measureText(textTh) / 2;
+			float hWidthEn = mTextPaint.measureText(textEn) / 2;
+			mTextPaint.getTextBounds(textTh, 0, textTh.length(), mRectTh);
+			mTextPaint.getTextBounds(textEn, 0, textEn.length(), mRectEn);
+			
+			int rectThTop = mRectTh.top; // we'll want this later
+			
+			Rect rectBg = mRectTh; // re-use object
+			rectBg.left = mRectTh.left; // same for both
+			rectBg.right = Math.max(mRectTh.right, mRectEn.right);
+			rectBg.top = Math.round(mRectTh.top + mRectEn.top - mLineSpacing);
+			rectBg.bottom = mRectTh.bottom;
+			
+			rectBg.offset(Math.round(textX - rectBg.width() / 2), Math.round(textY));
+			
+			// Draw text background
+			Rect padding = mRectEn; // re-use object
+			mDrawableStopInfoBg.getPadding(padding);
+			rectBg.top -= padding.top + padding.bottom;
+			rectBg.left -= padding.left;
+			rectBg.right += padding.right;
+			mDrawableStopInfoBg.setBounds(rectBg);
+			mDrawableStopInfoBg.draw(canvas);
+			
+			// Draw text
+			canvas.drawText(textEn, textX - hWidthEn, textY - padding.bottom + rectThTop - mLineSpacing, mTextPaint);
+			canvas.drawText(textTh, textX - hWidthTh, textY - padding.bottom, mTextPaint);
 		}
 	}
 	
