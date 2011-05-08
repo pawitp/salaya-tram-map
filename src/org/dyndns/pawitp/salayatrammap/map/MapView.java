@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ public class MapView extends ImageView implements OnClickListener {
 	
 	private static final String KEY_MATRIX = "matrix";
 	private static final String KEY_STOP_INFO = "stop_info";
+	
+	private static Drawable mDrawable; // So that the (huge) map doesn't have to be reloaded every time. Not so elegant though.
 	
 	private boolean mRestored = false;
 	private float[] mTmpValues = new float[9];
@@ -80,6 +83,12 @@ public class MapView extends ImageView implements OnClickListener {
 		setOnClickListener(this);
 		
 		mDbHelper.open();
+		
+		// Load drawable
+		if (mDrawable == null) { // this is static and will survive reloads
+			mDrawable = getResources().getDrawable(R.drawable.map);
+		}
+		setImageDrawable(mDrawable);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mGestureDetector = new GestureDetector(getContext(), mGestureDetectorListener, null, true);

@@ -70,6 +70,5 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
 		android:layout_above="@id/lblTramLeftStation"
-		android:src="@drawable/map"
 		android:scaleType="matrix"/>
 </RelativeLayout>
