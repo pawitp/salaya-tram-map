@@ -328,12 +328,12 @@ public class MapView extends ImageView implements OnClickListener {
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
-			Matrix matrix = new Matrix(getImageMatrix());
-			matrix.postTranslate(-distanceX, -distanceY);
+			mMatrix.set(getImageMatrix());
+			mMatrix.postTranslate(-distanceX, -distanceY);
 			
-			checkEdges(matrix);
+			checkEdges(mMatrix);
 			
-			setImageMatrix(matrix);
+			setImageMatrix(mMatrix);
 			return true;
 		}
 
