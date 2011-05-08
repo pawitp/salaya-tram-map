@@ -35,8 +35,10 @@ public class MapView extends ImageView implements OnClickListener {
 	private static final float TEXT_SIZE = 15F;
 	private static final float LINE_SPACING = 5F;
 	private static final float TEXT_Y_SHIFT = 12F;
+	private static final int NO_STOP_INFO = -1;
 	
 	private static final String KEY_MATRIX = "matrix";
+	private static final String KEY_STOP_INFO = "stop_info";
 	
 	private boolean mRestored = false;
 	private float[] mTmpValues = new float[9];
@@ -119,6 +121,12 @@ public class MapView extends ImageView implements OnClickListener {
 		Bundle bundle = (Bundle) state;
 		mTmpValues = bundle.getFloatArray(KEY_MATRIX);
 		
+		int stopId = bundle.getInt(KEY_STOP_INFO);
+		if (stopId != NO_STOP_INFO) {
+			Cursor cursor = mDbHelper.getStopInfo(stopId);
+			mStopInfo.readCursor(cursor);
+		}
+		
 		// Check zoom, edges later when widths and heights are initialized (onLayout)
 		
 		mRestored = true;
@@ -131,6 +139,14 @@ public class MapView extends ImageView implements OnClickListener {
 		Bundle state = new Bundle();
 		getImageMatrix().getValues(mTmpValues);
 		state.putFloatArray(KEY_MATRIX, mTmpValues);
+		
+		if (mStopInfo.enabled) {
+			state.putInt(KEY_STOP_INFO, mStopInfo.id);
+		}
+		else {
+			state.putInt(KEY_STOP_INFO, NO_STOP_INFO);
+		}
+		
 		return state;
 	}
 
@@ -354,9 +370,6 @@ public class MapView extends ImageView implements OnClickListener {
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			invalidate();
 			
-			// Disable old display regardless of whether we get a new one or not
-			mStopInfo.enabled = false;
-			
 			getImageMatrix().getValues(mTmpValues);
 			int imageX = (int)((e.getX() - mTmpValues[Matrix.MTRANS_X]) / mTmpValues[Matrix.MSCALE_X]);
 			int imageY = (int)((e.getY() - mTmpValues[Matrix.MTRANS_Y]) / mTmpValues[Matrix.MSCALE_Y]);
@@ -366,18 +379,15 @@ public class MapView extends ImageView implements OnClickListener {
 			Cursor cursor = mDbHelper.findNearestStop(imageX, imageY, (int) (SEARCH_LIMIT / mTmpValues[Matrix.MSCALE_X]));
 			try {
 				if (cursor.getCount() > 0) {
-					mStopInfo.enabled = true;
-					mStopInfo.id = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID));
-					mStopInfo.name_th = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_TH));
-					mStopInfo.name_en = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_EN));
-					mStopInfo.x = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_X));
-					mStopInfo.y = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_Y));
+					mStopInfo.readCursor(cursor);
 					
 					Log.v(TAG, "Stop: " + mStopInfo.id + " d: " + cursor.getString(cursor.getColumnIndex("d")));
 					
 					return true;
 				}
 				else {
+					mStopInfo.enabled = false;
+					
 					return false;
 				}
 			}
@@ -432,13 +442,22 @@ public class MapView extends ImageView implements OnClickListener {
 		}
 	}
 
-	private class StopInfo {
+	private static class StopInfo {
 		public boolean enabled = false;
 		public int id;
 		public String name_th;
 		public String name_en;
 		public int x;
 		public int y;
+		
+		public void readCursor(Cursor cursor) {
+			enabled = true;
+			id = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_ROWID));
+			name_th = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_TH));
+			name_en = cursor.getString(cursor.getColumnIndex(TramDbHelper.KEY_NAME_EN));
+			x = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_X));
+			y = cursor.getInt(cursor.getColumnIndex(TramDbHelper.KEY_Y));
+		}
 	}
 	
 }

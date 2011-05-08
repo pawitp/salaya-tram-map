@@ -23,6 +23,8 @@ public class TramDbHelper {
     public static final String KEY_TRAM_BLUE = "tram_blue";
     public static final String KEY_TRAM_RED = "tram_red";
     
+    private static final String TABLE_STOPS = "stops";
+    
     private static final String DATABASE_NAME = "tram.db";
     private static final int DATABASE_VERSION = 1;
     
@@ -71,6 +73,12 @@ public class TramDbHelper {
 		return cursor;
 	}
 
+	public Cursor getStopInfo(int stopId) {
+		Cursor cursor = mDb.query(TABLE_STOPS, new String[] { KEY_ROWID, KEY_NAME_TH, KEY_NAME_EN, KEY_X, KEY_Y } , KEY_ROWID + "=" + stopId, null, null, null, null);
+		cursor.moveToFirst();
+		return cursor;
+	}
+	
 	private void copyDatabase() {
 		try {
 			if (mUpgrading) {
