@@ -180,6 +180,15 @@ public class MapView extends ImageView implements OnClickListener {
 		invalidate();
 	}
 	
+	public boolean isShowingStopInfo() {
+		return mStopInfo.enabled;
+	}
+	
+	public void hideStopInfo() {
+		mStopInfo.enabled = false;
+		invalidate();
+	}
+	
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {

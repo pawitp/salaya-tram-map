@@ -55,6 +55,17 @@ public class MainActivity extends Activity {
 		mHandler.removeCallbacks(runnableUpdateTramsTime);
 	}
 
+	@Override
+	public void onBackPressed() {
+		MapView mapView = (MapView) findViewById(R.id.mapView);
+		if (mapView.isShowingStopInfo()) {
+			mapView.hideStopInfo();
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+	
 	private void updateTramTime(int tramId, int idLeft, int idNext) {
 		TramCarSchedule schedule = mTramsSchedule.getSchedule(tramId);
 		TextView txtLeft = (TextView) findViewById(idLeft);
