@@ -44,7 +44,6 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
-		onNewIntent(getIntent()); // in case the map is searched externally
 		runnableUpdateTramsTime.run();
 	}
 	
