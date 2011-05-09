@@ -1,11 +1,13 @@
 package org.dyndns.pawitp.salayatrammap;
 
+import org.dyndns.pawitp.salayatrammap.map.MapView;
 import org.dyndns.pawitp.salayatrammap.schedule.NoMoreTramException;
 import org.dyndns.pawitp.salayatrammap.schedule.TramCarSchedule;
 import org.dyndns.pawitp.salayatrammap.schedule.TramException;
 import org.dyndns.pawitp.salayatrammap.schedule.TramsSchedule;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -28,9 +30,21 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		
+		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			((MapView) findViewById(R.id.mapView)).showStopInfo(Integer.valueOf(intent.getDataString()));
+		} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			// TODO
+		}
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		
+		onNewIntent(getIntent()); // in case the map is searched externally
 		runnableUpdateTramsTime.run();
 	}
 	

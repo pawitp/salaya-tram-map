@@ -4,4 +4,5 @@
 	<string name="time_leaving_station">Next tram leaving station</string>
 	<string name="last_tram">Prev:</string>
 	<string name="no_tram">-</string>
+	<string name="search_hint">Search tram stops</string>
 </resources>

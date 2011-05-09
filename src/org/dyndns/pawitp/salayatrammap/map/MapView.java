@@ -44,6 +44,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private static Drawable mDrawable; // So that the (huge) map doesn't have to be reloaded every time. Not so elegant though.
 	
 	private boolean mRestored = false;
+	private boolean mLayout = false; // Prevent duplicate zoom/scale if onLayout is called more than once
 	private float[] mTmpValues = new float[9];
 	private Matrix mMatrix = new Matrix(); // for using in manipulate, don't create a new matrix everytime to reduce GC
 	private Scroller mScroller = new Scroller(getContext());
@@ -159,6 +160,26 @@ public class MapView extends ImageView implements OnClickListener {
 		return state;
 	}
 
+	public void showStopInfo(int stopId) {
+		Cursor cursor = mDbHelper.getStopInfo(stopId);
+		mStopInfo.readCursor(cursor);
+		
+		getImageMatrix().getValues(mTmpValues);
+		
+		int x = Math.round(mTmpValues[Matrix.MTRANS_X]);
+		int y = Math.round(mTmpValues[Matrix.MTRANS_Y]);
+		int fx = Math.round(mStopInfo.x * mTmpValues[Matrix.MSCALE_X]) - getWidth() / 2;
+		int fy = Math.round(mStopInfo.y * mTmpValues[Matrix.MSCALE_Y]) - getHeight() / 2;
+		int dx = -(x + fx);
+		int dy = -(y + fy);
+		
+		//Log.v(TAG, String.format("scaleX: %f scaleY: %f", mTmpValues[Matrix.MSCALE_X], mTmpValues[Matrix.MSCALE_Y]));
+		//Log.v(TAG, String.format("x: %d y: %d dx: %d dy: %d fx: %d fy :%d", x, y, dx, dy, fx, fy));
+		
+		mScroller.startScroll(x, y, dx, dy);
+		invalidate();
+	}
+	
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
@@ -166,23 +187,27 @@ public class MapView extends ImageView implements OnClickListener {
 		
 		// Zoom the map out by default and center it
 		// Cannot be done in the constructor because the size of the view is not known yet
-		if (!mRestored) {
-			mMatrix.set(getImageMatrix());
-			float scale = findFullscreenScale();
-			mMatrix.setScale(scale, scale);
+		if (!mLayout) {
+			if (!mRestored) {
+				mMatrix.set(getImageMatrix());
+				float scale = findFullscreenScale();
+				mMatrix.setScale(scale, scale);
+				
+				float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
+				float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
+				mMatrix.postTranslate(width, height);
+				
+				setImageMatrix(mMatrix);
+			}
+			else {
+				mMatrix.set(getImageMatrix());
+				mMatrix.setValues(mTmpValues);
+				checkZoom(mMatrix);
+				checkEdges(mMatrix);
+				setImageMatrix(mMatrix);
+			}
 			
-			float width = -(getDrawable().getIntrinsicWidth() * scale - getWidth()) / 2;
-			float height = -(getDrawable().getIntrinsicHeight() * scale - getHeight()) / 2;
-			mMatrix.postTranslate(width, height);
-			
-			setImageMatrix(mMatrix);
-		}
-		else {
-			mMatrix.set(getImageMatrix());
-			mMatrix.setValues(mTmpValues);
-			checkZoom(mMatrix);
-			checkEdges(mMatrix);
-			setImageMatrix(mMatrix);
+			mLayout = true;
 		}
 	}
 

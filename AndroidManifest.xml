@@ -8,12 +8,19 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity android:name=".MainActivity"
 				  android:label="@string/app_name"
-				  android:theme="@android:style/Theme.NoTitleBar">
+				  android:theme="@android:style/Theme.NoTitleBar"
+				  android:launchMode="singleTop">
+			<meta-data android:name="android.app.searchable"
+					   android:resource="@xml/searchable" />
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			<intent-filter>
+            	<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
 		</activity>
-
+		<provider android:name=".map.SearchSuggestionProvider"
+				  android:authorities="org.dyndns.pawitp.salayatrammap.map.SearchSuggestionProvider" />
 	</application>
 </manifest>

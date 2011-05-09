@@ -7,6 +7,7 @@ import java.io.InputStream;
 import org.dyndns.pawitp.salayatrammap.R;
 import org.dyndns.pawitp.salayatrammap.Utils;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -76,6 +77,13 @@ public class TramDbHelper {
 	public Cursor getStopInfo(int stopId) {
 		Cursor cursor = mDb.query(TABLE_STOPS, new String[] { KEY_ROWID, KEY_NAME_TH, KEY_NAME_EN, KEY_X, KEY_Y } , KEY_ROWID + "=" + stopId, null, null, null, null);
 		cursor.moveToFirst();
+		return cursor;
+	}
+	
+	public Cursor getSuggestions(String term) {
+		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops WHERE name_th LIKE ? OR name_en LIKE ?", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
+		term = "%" + term + "%";
+		Cursor cursor = mDb.rawQuery(query, new String[] { term, term });
 		return cursor;
 	}
 	
