@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
@@ -36,7 +37,7 @@ public class MainActivity extends Activity {
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			((MapView) findViewById(R.id.mapView)).showStopInfo(Integer.valueOf(intent.getDataString()));
 		} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			// TODO
+			Toast.makeText(this, R.string.use_search_suggestion, Toast.LENGTH_SHORT).show();
 		}
 	}
 
