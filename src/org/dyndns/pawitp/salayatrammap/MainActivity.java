@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ public class MainActivity extends Activity {
 		
 		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 		
-		mTramsSchedule = new TramsSchedule();
+		mTramsSchedule = new TramsSchedule(this);
 		mHandler = new Handler();
 	}
 
@@ -90,6 +91,13 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	public void holidayToggle(View view) {
+		mTramsSchedule.setHoliday(!mTramsSchedule.isHoliday());
+		
+		mHandler.removeCallbacks(runnableUpdateTramsTime);
+		runnableUpdateTramsTime.run();
+	}
+	
 	private void updateTramTime(int tramId, int idLeft, int idNext) {
 		TramCarSchedule schedule = mTramsSchedule.getSchedule(tramId);
 		TextView txtLeft = (TextView) findViewById(idLeft);
@@ -119,8 +127,11 @@ public class MainActivity extends Activity {
 			updateTramTime(TramsSchedule.TRAM_BLUE, R.id.txtTramLeftBlue, R.id.txtTramNextBlue);
 			updateTramTime(TramsSchedule.TRAM_RED, R.id.txtTramLeftRed, R.id.txtTramNextRed);
 			
-			long updateTime = mTramsSchedule.getNextUpdateTime();
+			// Update "Holiday" label
+			TextView lblHoliday = (TextView) findViewById(R.id.lblScheduleType);
+			lblHoliday.setText(mTramsSchedule.isHoliday() ? R.string.holiday_schedule : R.string.normal_schedule);
 			
+			long updateTime = mTramsSchedule.getNextUpdateTime();
 			mHandler.postDelayed(runnableUpdateTramsTime, updateTime);
 		}
 		

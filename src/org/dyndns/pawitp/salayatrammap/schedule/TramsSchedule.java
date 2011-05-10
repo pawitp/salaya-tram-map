@@ -1,5 +1,8 @@
 package org.dyndns.pawitp.salayatrammap.schedule;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -12,7 +15,13 @@ public class TramsSchedule {
 	public static final int TRAM_RED = 2;
 	
 	private static final int TRAMS_COUNT = 3;
+	
+	private static final String KEY_DATE = "holiday_date";
+	private static final String KEY_HOLIDAY = "holiday";
+	
 	private TramCarSchedule[] mTramCarSchedules = new TramCarSchedule[TRAMS_COUNT];
+	private boolean mIsHoliday;
+	private Context mContext;
 	
 	private static final Integer[][] OTHER_NORMAL_SCHEDULE = {
 		{6, 30}, {6, 40}, {6, 50}, {7, 00}, {7, 10}, {7, 20}, {7, 30}, {7, 40}, {7, 50},
@@ -50,7 +59,9 @@ public class TramsSchedule {
 		{16, 25}, {16, 45}, {17, 05}, {17, 25}, {17, 45}, {18, 05},
 	};
 	
-	public TramsSchedule() {
+	public TramsSchedule(Context context) {
+		mContext = context;
+		
 		mTramCarSchedules[TRAM_GREEN] = new TramCarSchedule();
 		mTramCarSchedules[TRAM_BLUE] = new TramCarSchedule();
 		mTramCarSchedules[TRAM_RED] = new TramCarSchedule();
@@ -75,21 +86,26 @@ public class TramsSchedule {
 	}
 	
 	public boolean isHoliday() {
-		// TODO: Public holidays
+		return mIsHoliday;
+	}
+	
+	public void setHoliday(boolean isHoliday) {
+		// Record if today is a holiday down to a SharedPreferences
 		Time time = new Time();
 		time.setToNow();
 		
-		if (time.weekDay == Time.SATURDAY || time.weekDay == Time.SUNDAY) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+		SharedPreferences.Editor prefEditor = pref.edit();
+		prefEditor.putLong(KEY_DATE, time.toMillis(false));
+		prefEditor.putBoolean(KEY_HOLIDAY, isHoliday);
+		prefEditor.commit();
 	}
 	
 	// Always call before using any of my functions!
 	// this functions also triggers calculation of next tram (for use with next update time)
 	public void updateSchedules() {
+		updateHoliday();
+		
 		if (!isHoliday()) {
 			mTramCarSchedules[TRAM_GREEN].updateSchedule(GREEN_NORMAL_SCHEDULE);
 			mTramCarSchedules[TRAM_BLUE].updateSchedule(OTHER_NORMAL_SCHEDULE);
@@ -99,6 +115,29 @@ public class TramsSchedule {
 			mTramCarSchedules[TRAM_GREEN].updateSchedule(GREEN_HOLIDAY_SCHEDULE);
 			mTramCarSchedules[TRAM_BLUE].updateSchedule(OTHER_HOLIDAY_SCHEDULE);
 			mTramCarSchedules[TRAM_RED].updateSchedule(OTHER_HOLIDAY_SCHEDULE);
+		}
+	}
+	
+	private void updateHoliday() {
+		// Check for override
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+		
+		Time timeRecorded = new Time();
+		timeRecorded.set(pref.getLong(KEY_DATE, 0));
+		Time time = new Time();
+		time.setToNow();
+		
+		if (timeRecorded.year == time.year && timeRecorded.yearDay == time.yearDay) {
+			// Stored override still valid
+			mIsHoliday = pref.getBoolean(KEY_HOLIDAY, false);
+		}
+		else { // check weekend/weekday
+			if (time.weekDay == Time.SATURDAY || time.weekDay == Time.SUNDAY) {
+				mIsHoliday = true;
+			}
+			else {
+				mIsHoliday = false;
+			}
 		}
 	}
 	

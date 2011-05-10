@@ -64,6 +64,14 @@
     	android:text="@string/time_leaving_station"
     	android:id="@+id/lblTramLeftStation"
     	android:layout_above="@id/linearLayoutTime"/>
+    <TextView
+    	android:layout_alignParentRight="true"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:id="@+id/lblScheduleType"
+    	android:layout_above="@id/linearLayoutTime"
+    	android:clickable="true"
+    	android:onClick="holidayToggle" />
     <org.dyndns.pawitp.salayatrammap.map.MapView
 		android:id="@+id/mapView"
 		android:layout_width="fill_parent"
