@@ -135,6 +135,7 @@ public class MapView extends ImageView implements OnClickListener {
 		if (stopId != NO_STOP_INFO) {
 			Cursor cursor = mDbHelper.getStopInfo(stopId);
 			mStopInfo.readCursor(cursor);
+			cursor.close();
 		}
 		
 		// Check zoom, edges later when widths and heights are initialized (onLayout)
