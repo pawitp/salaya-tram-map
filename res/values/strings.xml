@@ -8,5 +8,4 @@
 	<string name="normal_schedule">Normal Schedule</string>
 	<string name="search_hint">Search tram stops</string>
 	<string name="use_search_suggestion">Please use the search suggestions in the search dialog.</string>
-	<string name="menu_search">Search</string>
 </resources>
