@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+		
 		mTramsSchedule = new TramsSchedule();
 		mHandler = new Handler();
 	}
