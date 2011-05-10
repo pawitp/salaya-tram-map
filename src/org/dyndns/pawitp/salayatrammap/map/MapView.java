@@ -164,6 +164,7 @@ public class MapView extends ImageView implements OnClickListener {
 	public void showStopInfo(int stopId) {
 		Cursor cursor = mDbHelper.getStopInfo(stopId);
 		mStopInfo.readCursor(cursor);
+		cursor.close();
 		
 		getImageMatrix().getValues(mTmpValues);
 		
