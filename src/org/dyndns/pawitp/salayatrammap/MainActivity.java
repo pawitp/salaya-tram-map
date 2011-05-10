@@ -98,6 +98,10 @@ public class MainActivity extends Activity {
 		runnableUpdateTramsTime.run();
 	}
 	
+	public void btnSearchOnClick(View view) {
+		onSearchRequested();
+	}
+	
 	private void updateTramTime(int tramId, int idLeft, int idNext) {
 		TramCarSchedule schedule = mTramsSchedule.getSchedule(tramId);
 		TextView txtLeft = (TextView) findViewById(idLeft);

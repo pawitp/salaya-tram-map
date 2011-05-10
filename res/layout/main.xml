@@ -79,4 +79,14 @@
 		android:layout_alignParentLeft="true"
 		android:layout_above="@id/lblTramLeftStation"
 		android:scaleType="matrix"/>
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:layout_marginRight="5dp"
+		android:layout_marginTop="10dp"
+		android:id="@+id/btnSearch"
+		android:src="@drawable/ic_btn_search"
+		android:onClick="btnSearchOnClick" />
 </RelativeLayout>
