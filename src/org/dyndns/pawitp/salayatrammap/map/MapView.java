@@ -277,15 +277,15 @@ public class MapView extends ImageView implements OnClickListener {
 			int currY = mScroller.getCurrY();
 			if ((currX == mScroller.getFinalX() && currX != mScroller.getStartX()) || // Prevent awkward scrolling along the edge
 				(currY == mScroller.getFinalY() && currY != mScroller.getStartY())) {
-				mScroller.abortAnimation();
+				mScroller.forceFinished(true);
 			}
-			else {
-				mMatrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + currX,
-									 -mTmpValues[Matrix.MTRANS_Y] + currY);
-				
-				checkEdges(mMatrix);
-				setImageMatrix(mMatrix);
-			}
+			
+			mMatrix.postTranslate(-mTmpValues[Matrix.MTRANS_X] + currX,
+								 -mTmpValues[Matrix.MTRANS_Y] + currY);
+			
+			checkEdges(mMatrix);
+			setImageMatrix(mMatrix);
+			
 			invalidate();
 		}
 		
