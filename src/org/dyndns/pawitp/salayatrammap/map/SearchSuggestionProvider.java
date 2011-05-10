@@ -62,8 +62,7 @@ public class SearchSuggestionProvider extends ContentProvider {
 		switch (sUriMatcher.match(uri)) {
 		case SEARCH_SUGGEST:
 			if (uri.getPathSegments().size() > 1) {
-				String query = "*" + uri.getLastPathSegment().replace(" ", "*") + "*";
-				return mDbHelper.getSuggestions(query);
+				return mDbHelper.getSuggestions(uri.getLastPathSegment());
 			}
 			else {
 				return mDbHelper.getAllSuggestions();

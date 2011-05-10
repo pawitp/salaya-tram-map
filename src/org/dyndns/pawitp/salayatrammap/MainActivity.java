@@ -1,19 +1,20 @@
 package org.dyndns.pawitp.salayatrammap;
 
 import org.dyndns.pawitp.salayatrammap.map.MapView;
+import org.dyndns.pawitp.salayatrammap.map.TramDbHelper;
 import org.dyndns.pawitp.salayatrammap.schedule.NoMoreTramException;
 import org.dyndns.pawitp.salayatrammap.schedule.TramCarSchedule;
 import org.dyndns.pawitp.salayatrammap.schedule.TramException;
 import org.dyndns.pawitp.salayatrammap.schedule.TramsSchedule;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
@@ -21,6 +22,7 @@ public class MainActivity extends Activity {
 	
 	private TramsSchedule mTramsSchedule;
 	private Handler mHandler;
+	private TramDbHelper mDbHelper;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class MainActivity extends Activity {
 		
 		mTramsSchedule = new TramsSchedule(this);
 		mHandler = new Handler();
+		mDbHelper = new TramDbHelper(this);
+		mDbHelper.open();
 	}
 
 	@Override
@@ -40,7 +44,9 @@ public class MainActivity extends Activity {
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			((MapView) findViewById(R.id.mapView)).showStopInfo(Integer.valueOf(intent.getDataString()));
 		} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			Toast.makeText(this, R.string.use_search_suggestion, Toast.LENGTH_SHORT).show();
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			int id = mDbHelper.getFirstSearchResult(query);
+			((MapView) findViewById(R.id.mapView)).showStopInfo(id);
 		}
 	}
 

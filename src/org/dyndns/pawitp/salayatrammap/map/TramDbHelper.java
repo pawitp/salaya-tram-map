@@ -82,6 +82,7 @@ public class TramDbHelper {
 	
 	// term uses sqlite FTS3
 	public Cursor getSuggestions(String term) {
+		term = "*" + term.replace(" ", "*") + "*";
 		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops WHERE stops MATCH ?", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
 		Cursor cursor = mDb.rawQuery(query, new String[] { term });
 		return cursor;
@@ -91,6 +92,16 @@ public class TramDbHelper {
 		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
 		Cursor cursor = mDb.rawQuery(query, null);
 		return cursor;
+	}
+	
+	public int getFirstSearchResult(String term) {
+		term = "*" + term.replace(" ", "*") + "*";
+		Cursor cursor = mDb.rawQuery("SELECT _id FROM stops WHERE stops MATCH ? LIMIT 1", new String[] { term });
+		cursor.moveToFirst();
+		int ret = cursor.getInt(cursor.getColumnIndex(KEY_ROWID));
+		cursor.close();
+		
+		return ret;
 	}
 	
 	private void copyDatabase() {
