@@ -27,7 +27,7 @@ public class TramDbHelper {
     private static final String TABLE_STOPS = "stops";
     
     private static final String DATABASE_NAME = "tram.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     private SQLiteDatabase mDb;
     private boolean mUpgrading = false;
@@ -80,10 +80,10 @@ public class TramDbHelper {
 		return cursor;
 	}
 	
+	// term uses sqlite FTS3
 	public Cursor getSuggestions(String term) {
-		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops WHERE name_th LIKE ? OR name_en LIKE ?", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
-		term = "%" + term + "%";
-		Cursor cursor = mDb.rawQuery(query, new String[] { term, term });
+		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops WHERE stops MATCH ?", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
+		Cursor cursor = mDb.rawQuery(query, new String[] { term });
 		return cursor;
 	}
 	

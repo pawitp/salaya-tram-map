@@ -63,7 +63,7 @@ public class SearchSuggestionProvider extends ContentProvider {
 		case SEARCH_SUGGEST:
 			String query;
 			if (uri.getPathSegments().size() > 1) {
-				query = uri.getLastPathSegment().replace(" ", "%");
+				query = "*" + uri.getLastPathSegment().replace(" ", "*") + "*";
 			}
 			else {
 				query = "";
