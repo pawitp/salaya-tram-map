@@ -87,6 +87,12 @@ public class TramDbHelper {
 		return cursor;
 	}
 	
+	public Cursor getAllSuggestions() {
+		String query = String.format("SELECT _id, _id AS %s, name_en AS %s, name_th AS %s FROM stops", SearchManager.SUGGEST_COLUMN_INTENT_DATA, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2);
+		Cursor cursor = mDb.rawQuery(query, null);
+		return cursor;
+	}
+	
 	private void copyDatabase() {
 		try {
 			if (mUpgrading) {
