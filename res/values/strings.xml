@@ -7,4 +7,5 @@
 	<string name="holiday_schedule">Holiday Schedule</string>
 	<string name="normal_schedule">Normal Schedule</string>
 	<string name="search_hint">Search tram stops</string>
+	<string name="no_match">No match found.</string>
 </resources>

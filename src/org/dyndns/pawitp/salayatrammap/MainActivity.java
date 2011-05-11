@@ -1,6 +1,7 @@
 package org.dyndns.pawitp.salayatrammap;
 
 import org.dyndns.pawitp.salayatrammap.map.MapView;
+import org.dyndns.pawitp.salayatrammap.map.NoStopMatchedException;
 import org.dyndns.pawitp.salayatrammap.map.TramDbHelper;
 import org.dyndns.pawitp.salayatrammap.schedule.NoMoreTramException;
 import org.dyndns.pawitp.salayatrammap.schedule.TramCarSchedule;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
@@ -44,9 +46,13 @@ public class MainActivity extends Activity {
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			((MapView) findViewById(R.id.mapView)).showStopInfo(Integer.valueOf(intent.getDataString()));
 		} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			String query = intent.getStringExtra(SearchManager.QUERY);
-			int id = mDbHelper.getFirstSearchResult(query);
-			((MapView) findViewById(R.id.mapView)).showStopInfo(id);
+			try {
+				String query = intent.getStringExtra(SearchManager.QUERY);
+				int id = mDbHelper.getFirstSearchResult(query);
+				((MapView) findViewById(R.id.mapView)).showStopInfo(id);
+			} catch (NoStopMatchedException e) {
+				Toast.makeText(this, R.string.no_match, Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 

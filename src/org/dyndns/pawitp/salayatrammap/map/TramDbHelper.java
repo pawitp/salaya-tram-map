@@ -94,14 +94,22 @@ public class TramDbHelper {
 		return cursor;
 	}
 	
-	public int getFirstSearchResult(String term) {
+	public int getFirstSearchResult(String term) throws NoStopMatchedException {
 		term = "*" + term.replace(" ", "*") + "*";
 		Cursor cursor = mDb.rawQuery("SELECT _id FROM stops WHERE stops MATCH ? LIMIT 1", new String[] { term });
-		cursor.moveToFirst();
-		int ret = cursor.getInt(cursor.getColumnIndex(KEY_ROWID));
-		cursor.close();
 		
-		return ret;
+		try {
+			if (cursor.getCount() > 0) {
+				cursor.moveToFirst();
+				return cursor.getInt(cursor.getColumnIndex(KEY_ROWID));
+			}
+			else {
+				throw new NoStopMatchedException();
+			}
+		}
+		finally {
+			cursor.close();
+		}
 	}
 	
 	private void copyDatabase() {
