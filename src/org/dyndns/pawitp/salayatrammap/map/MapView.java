@@ -58,7 +58,7 @@ public class MapView extends ImageView implements OnClickListener {
 	private Paint mTextPaint = new Paint();
 	private Rect mRectTh = new Rect();
 	private Rect mRectEn = new Rect();
-	private NinePatchDrawable mDrawableStopInfoBg = (NinePatchDrawable) getResources().getDrawable(R.drawable.bubble);
+	private NinePatchDrawable mDrawableStopInfoBg;
 	private float mDensity = getContext().getResources().getDisplayMetrics().density;
 	private float mLineSpacing = LINE_SPACING * mDensity;
 	
@@ -83,7 +83,10 @@ public class MapView extends ImageView implements OnClickListener {
 		setClickable(true);
 		setOnClickListener(this);
 		
-		mDbHelper.open();
+		if (!isInEditMode()) {
+			mDrawableStopInfoBg = (NinePatchDrawable) getResources().getDrawable(R.drawable.bubble);
+			mDbHelper.open();
+		}
 		
 		// Load drawable
 		if (mDrawable == null) { // this is static and will survive reloads
