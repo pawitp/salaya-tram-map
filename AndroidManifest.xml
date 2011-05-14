@@ -22,5 +22,24 @@
 		</activity>
 		<provider android:name=".map.SearchSuggestionProvider"
 				  android:authorities="org.dyndns.pawitp.salayatrammap.map.SearchSuggestionProvider" />
+		<receiver android:name=".TramScheduleWidgetProvider" >
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="org.dyndns.pawitp.salayatrammap.UPDATE_WIDGET" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider"
+					   android:resource="@xml/widget" />
+		</receiver>
+		<receiver android:name=".MiscWidgetBroadcastReceiver"
+				  android:enabled="false" >
+			<intent-filter>
+				<action android:name="org.dyndns.pawitp.salayatrammap.UPDATE_WIDGET_IF_ENABLED" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.TIME_SET" />
+			</intent-filter>
+		</receiver>
 	</application>
 </manifest>

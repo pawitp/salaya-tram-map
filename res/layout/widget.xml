@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:id="@+id/widgetLayout"
+	android:layout_alignParentBottom="true"
+	android:layout_width="fill_parent"
+	android:clickable="true" >
+	<RelativeLayout
+		style="@style/tram_time_layout"
+		android:background="@drawable/bg_tram_green">
+		<TextView
+			android:id="@+id/txtTramNextGreen"
+			style="@style/tram_leaving_time"/>
+		<TextView
+			android:id="@+id/lblTramLeftGreen"
+			android:layout_below="@id/txtTramNextGreen"
+			style="@style/tram_left_label"/>
+		<TextView
+			android:id="@+id/txtTramLeftGreen"
+			android:layout_toRightOf="@id/lblTramLeftGreen"
+			android:layout_alignBottom="@id/lblTramLeftGreen"
+			style="@style/tram_left_time"/>
+	</RelativeLayout>
+	<RelativeLayout
+		style="@style/tram_time_layout"
+		android:background="@drawable/bg_tram_red">
+		<TextView
+			android:id="@+id/txtTramNextRed"
+			style="@style/tram_leaving_time"/>
+		<TextView
+			android:id="@+id/lblTramLeftRed"
+			android:layout_below="@id/txtTramNextRed"
+			style="@style/tram_left_label"/>
+		<TextView
+			android:id="@+id/txtTramLeftRed"
+			android:layout_toRightOf="@id/lblTramLeftRed"
+			android:layout_alignBottom="@id/lblTramLeftRed"
+			style="@style/tram_left_time"/>
+	</RelativeLayout>
+	<RelativeLayout
+		style="@style/tram_time_layout"
+		android:background="@drawable/bg_tram_blue">
+		<TextView
+			android:id="@+id/txtTramNextBlue"
+			style="@style/tram_leaving_time"/>
+		<TextView
+			android:id="@+id/lblTramLeftBlue"
+			android:layout_below="@id/txtTramNextBlue"
+			style="@style/tram_left_label"/>
+		<TextView
+			android:id="@+id/txtTramLeftBlue"
+			android:layout_toRightOf="@id/lblTramLeftBlue"
+			android:layout_alignBottom="@id/lblTramLeftBlue"
+			style="@style/tram_left_time"/>
+	</RelativeLayout>
+</LinearLayout>

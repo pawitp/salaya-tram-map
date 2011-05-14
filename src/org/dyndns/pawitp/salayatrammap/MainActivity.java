@@ -87,6 +87,10 @@ public class MainActivity extends Activity {
 		
 		mHandler.removeCallbacks(runnableUpdateTramsTime);
 		runnableUpdateTramsTime.run();
+		
+		// Update widget
+		Intent i = new Intent(MiscWidgetBroadcastReceiver.UPDATE_WIDGET_IF_ENABLED_INTENT);
+		sendBroadcast(i);
 	}
 	
 	public void btnSearchOnClick(View view) {
