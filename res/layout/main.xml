@@ -4,10 +4,8 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<org.dyndns.pawitp.salayatrammap.map.MapView
+		style="@style/map_view"
 		android:id="@+id/mapView"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_alignParentLeft="true"
 		android:scaleType="matrix"/>
 	<RelativeLayout
 		style="@style/overlay_layout"

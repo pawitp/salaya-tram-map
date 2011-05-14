@@ -6,5 +6,5 @@
 	<color name="tram_red_bg_gradient_end">#a11d24</color>
 	<color name="tram_blue_bg_gradient_start">#2f3fa8</color>
 	<color name="tram_blue_bg_gradient_end">#1d2666</color>
-	<color name="overlay_bg">#A000</color>
+	<color name="overlay_bg">#000</color>
 </resources>
