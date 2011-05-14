@@ -3,7 +3,7 @@
 		  package="org.dyndns.pawitp.salayatrammap"
 		  android:versionCode="3"
 		  android:versionName="1.0.1">
-	<uses-sdk android:minSdkVersion="7" />
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="11" />
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity android:name=".MainActivity"
