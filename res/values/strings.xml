@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Salaya Tram</string>
-	<string name="time_leaving_station">Next trams leaving station</string>
+	<string name="time_leaving_station">Trams leaving station</string>
 	<string name="last_tram">Prev:</string>
 	<string name="no_tram">-</string>
 	<string name="holiday_schedule">Holiday Schedule</string>
