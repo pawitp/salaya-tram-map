@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<style name="overlay_layout">
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_alignParentBottom">true</item>
+		<item name="android:layout_alignParentRight">true</item>
+		<item name="android:layout_marginRight">5sp</item>
+		<item name="android:layout_marginBottom">5sp</item>
+		<item name="android:paddingLeft">5sp</item>
+		<item name="android:paddingRight">5sp</item>
+		<item name="android:paddingTop">2sp</item>
+		<item name="android:paddingBottom">5sp</item>
+		<item name="android:background">@color/overlay_bg</item>
+	</style>
+	<style name="overlay_text">
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:paddingLeft">2sp</item>
+		<item name="android:paddingRight">2sp</item>
+		<item name="android:paddingBottom">2sp</item>
+	</style>
 	<style name="tram_leaving_time">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>

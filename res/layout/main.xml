@@ -3,97 +3,89 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/linearLayoutTime"
-		android:layout_alignParentBottom="true"
-		android:layout_width="fill_parent">
-		<RelativeLayout
-			style="@style/tram_time_layout"
-			android:background="@drawable/bg_tram_green">
-			<TextView
-				android:id="@+id/txtTramNextGreen"
-				style="@style/tram_leaving_time"/>
-			<TextView
-				android:id="@+id/lblTramLeftGreen"
-				android:layout_below="@id/txtTramNextGreen"
-				style="@style/tram_left_label"/>
-			<TextView
-				android:id="@+id/txtTramLeftGreen"
-				android:layout_toRightOf="@id/lblTramLeftGreen"
-				android:layout_alignBottom="@id/lblTramLeftGreen"
-				style="@style/tram_left_time"/>
-		</RelativeLayout>
-		<RelativeLayout
-			style="@style/tram_time_layout"
-			android:background="@drawable/bg_tram_red">
-			<TextView
-				android:id="@+id/txtTramNextRed"
-				style="@style/tram_leaving_time"/>
-			<TextView
-				android:id="@+id/lblTramLeftRed"
-				android:layout_below="@id/txtTramNextRed"
-				style="@style/tram_left_label"/>
-			<TextView
-				android:id="@+id/txtTramLeftRed"
-				android:layout_toRightOf="@id/lblTramLeftRed"
-				android:layout_alignBottom="@id/lblTramLeftRed"
-				style="@style/tram_left_time"/>
-		</RelativeLayout>
-		<RelativeLayout
-			style="@style/tram_time_layout"
-			android:background="@drawable/bg_tram_blue">
-			<TextView
-				android:id="@+id/txtTramNextBlue"
-				style="@style/tram_leaving_time"/>
-			<TextView
-				android:id="@+id/lblTramLeftBlue"
-				android:layout_below="@id/txtTramNextBlue"
-				style="@style/tram_left_label"/>
-			<TextView
-				android:id="@+id/txtTramLeftBlue"
-				android:layout_toRightOf="@id/lblTramLeftBlue"
-				android:layout_alignBottom="@id/lblTramLeftBlue"
-				style="@style/tram_left_time"/>
-		</RelativeLayout>
-	</LinearLayout>
 	<org.dyndns.pawitp.salayatrammap.map.MapView
 		android:id="@+id/mapView"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="fill_parent"
 		android:layout_alignParentLeft="true"
-		android:layout_above="@id/linearLayoutTime"
 		android:scaleType="matrix"/>
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/linearLayoutOverlay"
-		android:layout_above="@id/linearLayoutTime"
-		android:layout_width="fill_parent"
-		android:background="@color/overlay_bg">
+	<RelativeLayout
+		style="@style/overlay_layout"
+		android:id="@+id/linearLayoutOverlay">
 		<TextView
-			android:layout_alignParentLeft="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="@string/time_leaving_station"
-			android:id="@+id/lblTramLeftStation" />
+			style="@style/overlay_text"
+			android:id="@+id/lblTramLeftStation"
+			android:layout_alignLeft="@+id/linearLayoutTime"
+			android:text="@string/time_leaving_station" />
 		<TextView
-			android:layout_alignParentRight="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			style="@style/overlay_text"
 			android:id="@+id/lblScheduleType"
-			android:layout_above="@id/linearLayoutTime"
+			android:layout_alignRight="@id/linearLayoutTime"
 			android:clickable="true"
 			android:onClick="holidayToggle" />
-	</LinearLayout>
+		<LinearLayout
+			android:id="@+id/linearLayoutTime"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/lblTramLeftStation">
+			<RelativeLayout
+				style="@style/tram_time_layout"
+				android:background="@drawable/bg_tram_green">
+				<TextView
+					android:id="@+id/txtTramNextGreen"
+					style="@style/tram_leaving_time"/>
+				<TextView
+					android:id="@+id/lblTramLeftGreen"
+					android:layout_below="@id/txtTramNextGreen"
+					style="@style/tram_left_label"/>
+				<TextView
+					android:id="@+id/txtTramLeftGreen"
+					android:layout_toRightOf="@id/lblTramLeftGreen"
+					android:layout_alignBaseline="@id/lblTramLeftGreen"
+					style="@style/tram_left_time"/>
+			</RelativeLayout>
+			<RelativeLayout
+				style="@style/tram_time_layout"
+				android:background="@drawable/bg_tram_red">
+				<TextView
+					android:id="@+id/txtTramNextRed"
+					style="@style/tram_leaving_time"/>
+				<TextView
+					android:id="@+id/lblTramLeftRed"
+					android:layout_below="@id/txtTramNextRed"
+					style="@style/tram_left_label"/>
+				<TextView
+					android:id="@+id/txtTramLeftRed"
+					android:layout_toRightOf="@id/lblTramLeftRed"
+					android:layout_alignBaseline="@id/lblTramLeftRed"
+					style="@style/tram_left_time"/>
+			</RelativeLayout>
+			<RelativeLayout
+				style="@style/tram_time_layout"
+				android:background="@drawable/bg_tram_blue">
+				<TextView
+					android:id="@+id/txtTramNextBlue"
+					style="@style/tram_leaving_time"/>
+				<TextView
+					android:id="@+id/lblTramLeftBlue"
+					android:layout_below="@id/txtTramNextBlue"
+					style="@style/tram_left_label"/>
+				<TextView
+					android:id="@+id/txtTramLeftBlue"
+					android:layout_toRightOf="@id/lblTramLeftBlue"
+					android:layout_alignBaseline="@id/lblTramLeftBlue"
+					style="@style/tram_left_time"/>
+			</RelativeLayout>
+		</LinearLayout>
+	</RelativeLayout>
 	<ImageButton
+		android:id="@+id/btnSearch"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:layout_marginRight="5dp"
 		android:layout_marginTop="10dp"
-		android:id="@+id/btnSearch"
 		android:src="@drawable/ic_btn_search"
 		android:onClick="btnSearchOnClick" />
 </RelativeLayout>
