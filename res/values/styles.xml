@@ -45,4 +45,32 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_weight">1</item>
 	</style>
+	
+	<!-- Don't base on to prevent -land from messing with it -->
+	<style name="tram_leaving_time_widget">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_alignParentTop">true</item>
+		<item name="android:textSize">23sp</item>
+		<item name="android:gravity">center</item>
+		<item name="android:text">00:00</item>
+	</style>
+	<style name="tram_left_label_widget">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_alignParentBottom">true</item>
+		<item name="android:paddingLeft">5sp</item>
+		<item name="android:text">@string/last_tram</item>
+	</style>
+	<style name="tram_left_time_widget">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:gravity">center_horizontal</item>
+		<item name="android:text">00:00</item>
+	</style>
+	<style name="tram_time_layout_widget">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_weight">1</item>
+	</style>
 </resources>
