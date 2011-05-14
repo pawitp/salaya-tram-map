@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="tram_red">#dd0e3f</color>
-	<color name="tram_blue">#003ed8</color>
-	<color name="tram_green">#4f8c1f</color>
+	<color name="tram_green_bg_gradient_start">#069250</color>
+	<color name="tram_green_bg_gradient_end">#055c34</color>
+	<color name="tram_red_bg_gradient_start">#df2f3a</color>
+	<color name="tram_red_bg_gradient_end">#a11d24</color>
+	<color name="tram_blue_bg_gradient_start">#2f3fa8</color>
+	<color name="tram_blue_bg_gradient_end">#1d2666</color>
 </resources>
