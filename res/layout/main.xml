@@ -44,22 +44,6 @@
 			</RelativeLayout>
 			<RelativeLayout
 				style="@style/tram_time_layout"
-				android:background="@drawable/bg_tram_red">
-				<TextView
-					android:id="@+id/txtTramNextRed"
-					style="@style/tram_leaving_time"/>
-				<TextView
-					android:id="@+id/lblTramLeftRed"
-					android:layout_below="@id/txtTramNextRed"
-					style="@style/tram_left_label"/>
-				<TextView
-					android:id="@+id/txtTramLeftRed"
-					android:layout_toRightOf="@id/lblTramLeftRed"
-					android:layout_alignBaseline="@id/lblTramLeftRed"
-					style="@style/tram_left_time"/>
-			</RelativeLayout>
-			<RelativeLayout
-				style="@style/tram_time_layout"
 				android:background="@drawable/bg_tram_blue">
 				<TextView
 					android:id="@+id/txtTramNextBlue"
@@ -72,6 +56,22 @@
 					android:id="@+id/txtTramLeftBlue"
 					android:layout_toRightOf="@id/lblTramLeftBlue"
 					android:layout_alignBaseline="@id/lblTramLeftBlue"
+					style="@style/tram_left_time"/>
+			</RelativeLayout>
+			<RelativeLayout
+				style="@style/tram_time_layout"
+				android:background="@drawable/bg_tram_red">
+				<TextView
+					android:id="@+id/txtTramNextRed"
+					style="@style/tram_leaving_time"/>
+				<TextView
+					android:id="@+id/lblTramLeftRed"
+					android:layout_below="@id/txtTramNextRed"
+					style="@style/tram_left_label"/>
+				<TextView
+					android:id="@+id/txtTramLeftRed"
+					android:layout_toRightOf="@id/lblTramLeftRed"
+					android:layout_alignBaseline="@id/lblTramLeftRed"
 					style="@style/tram_left_time"/>
 			</RelativeLayout>
 		</LinearLayout>
