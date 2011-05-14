@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="tram_leaving_time">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_centerHorizontal">true</item>
+		<item name="android:paddingLeft">5sp</item>
+		<item name="android:paddingRight">5sp</item>
+		<item name="android:textSize">23sp</item>
+		<item name="android:text">00:00</item>
+	</style>
+	<style name="tram_left_label">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:paddingLeft">5sp</item>
+		<item name="android:paddingBottom">2sp</item>
+		<item name="android:text">@string/last_tram</item>
+	</style>
+	<style name="tram_left_time">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:paddingLeft">5sp</item>
+		<item name="android:paddingRight">5sp</item>
+		<item name="android:text">00:00</item>
+	</style>
+	<style name="tram_time_layout">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+</resources>
